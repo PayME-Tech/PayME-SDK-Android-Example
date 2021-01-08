@@ -121,7 +121,7 @@ Trong đó **_AES_** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn n
 
 ### Các c**hức năng của PayME SDK**
 
-### isConnected()
+### getAccountInfo()
 
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
