@@ -17,7 +17,7 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 
 **Bước 1 :**
 
-Tích hợp thư viện hỗ trợ
+Tích hợp thư viện hỗ trợ. Dung lượng 472.76 KB
 
 **File build.gradle Project**
 
