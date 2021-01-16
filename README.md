@@ -112,7 +112,9 @@ public fun login(
   onSuccess:(JSONObject)->Unit,
   onError: (JSONObject?, Int?, String) -> Unit
 }
-VD
+```
+Ví dụ:
+```kotlin
 public fun loginExample(){
   payme.loggin(onSuccess = { jsonObject ->
                     walletView.setVisibility(View.VISIBLE)
@@ -221,7 +223,10 @@ public fun deposit(
   extraData : String,
   onSuccess: (JSONObject) -> Unit,
   onError:(JSONObject?, Int?, String) -> Unit)
-VD :
+```
+Ví dụ :
+
+```kotlin
 	payme.deposit(amount, null, "",
                 onSuccess = { json: JSONObject ->
                 },
@@ -249,7 +254,9 @@ Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.
 ```kotlin
 public fun withdraw(amount: Int, description: String?, extraData: String,
                     onSuccess: (JSONObject) -> Unit, onError: (JSONObject?, Int?, String) -> Unit)
-VD
+```		    
+Ví dụ:
+```kotlin
 payme.withdraw(amount, null, "",
                 onSuccess = { json: JSONObject ->
                 },
