@@ -101,10 +101,11 @@ val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKe
 ```
 
 ### login()
+Có 2 trường hợp
+- Dùng để login lần đầu tiên ngay sau khi khởi tạo PayME.
+- Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED
 
-Dùng để login
-
-Login thành công rồi gọi các chức năng khác của sdk
+Sau khi gọi login() thành công rồi thì mới gọi các chức năng khác của SDK ( openWallet, pay ... )
 
 ```kotlin
 public fun login(
