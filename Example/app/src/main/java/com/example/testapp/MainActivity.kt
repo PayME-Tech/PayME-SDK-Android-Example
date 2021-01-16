@@ -1,25 +1,37 @@
 package com.example.testapp
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import org.json.JSONObject
 import vn.payme.sdk.PayME
 import vn.payme.sdk.model.Action
 import vn.payme.sdk.model.Env
+import java.security.PublicKey
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+val APP_TOKEN = "APP_TOKEN"
+val SECRET_KEY = "SECRET_KEY"
+val PUBLIC_KEY = "PUBLIC_KEY"
+val ON_LOG = "ON_LOG"
+
 class MainActivity : AppCompatActivity() {
-    val AppToken: String =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MX0.wNtHVZ-olKe7OAkgLigkTSsLVQKv_YL9fHKzX9mn9II"
+    lateinit var AppToken: String
+    lateinit var PrivateKey: String
+    lateinit var PublicKey: String
     lateinit var payme: PayME
     lateinit var context: Context
-    fun convertInt(amount: String): Int {
+
+   fun convertInt(amount: String): Int {
         try {
             return Integer.parseInt(amount)
 
@@ -30,10 +42,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     lateinit var button: Button
-    lateinit var buttonSubmit: LinearLayout
+    lateinit var buttonLogin: Button
+    lateinit var buttonLogout: Button
     lateinit var buttonReload: ImageView
-    lateinit var loading: ProgressBar
     lateinit var buttonDeposit: Button
     lateinit var buttonWithdraw: Button
     lateinit var buttonPay: Button
@@ -43,22 +56,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var moneyDeposit: EditText
     lateinit var moneyPay: EditText
     lateinit var moneyWithdraw: EditText
+    lateinit var walletView: LinearLayout
+    lateinit var buttonSetting: ImageView
+    lateinit var spinnerEnvironment: Spinner
 
-    val PublicKey: String = "-----BEGIN PUBLIC KEY-----\n" +
-            "   MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKi\n" +
-            "   wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==\n" +
-            "   -----END PUBLIC KEY-----"
     var ConnectToken: String = "qBpM18YIyB15rdpFFfJpzsUBXNkaQ9rnCAN3asLNCrmEgQoS9YlhEVL8iQWT+6hhLSMs/C6uBUXxqD1PN33yhtfisiynwC1TeGV8TuT5bcdsSdgR+il/apjp886i1HJ3"
-    val PrivateKey: String = "-----BEGIN PRIVATE KEY-----\n" +
-            "    MIIBPAIBAAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKiwIhTJpAi1XnbfOSrW/Eb\n" +
-            "    w6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQJBAJSfTrSCqAzyAo59Ox+m\n" +
-            "    Q1ZdsYWBhxc2084DwTHM8QN/TZiyF4fbVYtjvyhG8ydJ37CiG7d9FY1smvNG3iDC\n" +
-            "    dwECIQDygv2UOuR1ifLTDo4YxOs2cK3+dAUy6s54mSuGwUeo4QIhAK7SiYDyGwGo\n" +
-            "    CwqjOdgOsQkJTGoUkDs8MST0MtmPAAs9AiEAjLT1/nBhJ9V/X3f9eF+g/bhJK+8T\n" +
-            "    KSTV4WE1wP0Z3+ECIA9E3DWi77DpWG2JbBfu0I+VfFMXkLFbxH8RxQ8zajGRAiEA\n" +
-            "    8Ly1xJ7UW3up25h9aa9SILBpGqWtJlNQgfVKBoabzsU=\n" +
-            "    -----END PRIVATE KEY-----";
-
 
     fun updateWalletInfo() {
 
@@ -76,15 +78,46 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun getEnviromentSelected(value: String): Env {
+        if(value === "DEV"){
+            return Env.TEST
+        }else if(value === "Production"){
+            return Env.PRODUCTION
+        }
+        return Env.SANDBOX
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         context = this
         setContentView(R.layout.activity_main)
+
+        val paymePref = getSharedPreferences("PaymePref", MODE_PRIVATE)
+        AppToken = paymePref.getString(APP_TOKEN, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MX0.wNtHVZ-olKe7OAkgLigkTSsLVQKv_YL9fHKzX9mn9II")!!
+        PrivateKey = paymePref.getString(SECRET_KEY, "-----BEGIN PRIVATE KEY-----\n" +
+                "    MIIBPAIBAAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKiwIhTJpAi1XnbfOSrW/Eb\n" +
+                "    w6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQJBAJSfTrSCqAzyAo59Ox+m\n" +
+                "    Q1ZdsYWBhxc2084DwTHM8QN/TZiyF4fbVYtjvyhG8ydJ37CiG7d9FY1smvNG3iDC\n" +
+                "    dwECIQDygv2UOuR1ifLTDo4YxOs2cK3+dAUy6s54mSuGwUeo4QIhAK7SiYDyGwGo\n" +
+                "    CwqjOdgOsQkJTGoUkDs8MST0MtmPAAs9AiEAjLT1/nBhJ9V/X3f9eF+g/bhJK+8T\n" +
+                "    KSTV4WE1wP0Z3+ECIA9E3DWi77DpWG2JbBfu0I+VfFMXkLFbxH8RxQ8zajGRAiEA\n" +
+                "    8Ly1xJ7UW3up25h9aa9SILBpGqWtJlNQgfVKBoabzsU=\n" +
+                "    -----END PRIVATE KEY-----")!!
+        PublicKey = paymePref.getString(PUBLIC_KEY, "-----BEGIN PUBLIC KEY-----\n" +
+                "   MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKi\n" +
+                "   wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==\n" +
+                "   -----END PUBLIC KEY-----")!!
+
+//        Log.d("Test - AppToken",AppToken)
+//        Log.d("Test - PrivateKey",PrivateKey)
+//        Log.d("Test - PublicKey",PublicKey)
+
         button = findViewById(R.id.button)
-        buttonSubmit = findViewById(R.id.buttonSubmit)
+        buttonLogin = findViewById(R.id.buttonLogin)
+        buttonLogout = findViewById(R.id.buttonLogout)
+        buttonSetting = findViewById(R.id.buttonSetting)
         buttonReload = findViewById(R.id.buttonReload)
-        loading = findViewById(R.id.loading)
         buttonDeposit = findViewById(R.id.buttonDeposit)
         buttonWithdraw = findViewById(R.id.buttonWithdraw)
         buttonPay = findViewById(R.id.buttonPay)
@@ -94,16 +127,21 @@ class MainActivity : AppCompatActivity() {
         moneyDeposit = findViewById(R.id.moneyDeposit)
         moneyPay = findViewById(R.id.moneyPay)
         moneyWithdraw = findViewById(R.id.moneyWithdraw)
+        walletView = findViewById(R.id.walletView)
+        spinnerEnvironment = findViewById(R.id.enviromentSpiner)
+
         var configColor = arrayOf<String>("#75255b", "#9d455f")
         this.payme =
                 PayME(this, AppToken, PublicKey, ConnectToken, PrivateKey, configColor, Env.SANDBOX)
+
         buttonReload.setOnClickListener {
             if (ConnectToken.length > 0) {
                 updateWalletInfo()
             }
 
         }
-        buttonSubmit.setOnClickListener {
+
+        buttonLogin.setOnClickListener {
             if (inputUserId.text.toString().length > 0 && inputPhoneNumber.text.toString().length >= 10) {
                 val params: MutableMap<String, Any> = mutableMapOf()
                 val tz = TimeZone.getTimeZone("UTC")
@@ -132,14 +170,20 @@ class MainActivity : AppCompatActivity() {
                         PublicKey,
                         ConnectToken,
                         PrivateKey,
-                        configColor,
-                        Env.SANDBOX
+                        configColor, getEnviromentSelected(spinnerEnvironment.selectedItem.toString())
                     )
 
+                walletView.setVisibility(View.VISIBLE)
+
             }
-
-
         }
+
+        buttonLogout.setOnClickListener {
+            inputPhoneNumber.text = null
+            inputUserId.text = null
+            walletView.setVisibility(View.GONE)
+        }
+
         button.setOnClickListener {
             if (ConnectToken.length > 0) {
                 payme.openWallet(
@@ -182,6 +226,7 @@ class MainActivity : AppCompatActivity() {
                     })
             }
         }
+
         buttonPay.setOnClickListener {
             if (ConnectToken.length > 0) {
                 val amount = convertInt(moneyPay.text.toString())
@@ -198,6 +243,11 @@ class MainActivity : AppCompatActivity() {
                 )
 
             }
+        }
+
+        buttonSetting.setOnClickListener {
+            val intent = Intent(this, SettingAcitivity::class.java)
+            startActivity(intent)
         }
     }
 }
