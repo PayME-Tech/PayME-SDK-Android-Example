@@ -1,4 +1,4 @@
-›package com.example.testapp
+package com.example.testapp
 
 import android.content.Intent
 import android.content.SharedPreferences
