@@ -39,7 +39,7 @@ allprojects {
 dependencies {
   ...
 // thư viện chính
-implementation 'vn.payme.sdk:payme-sdk:0.1.7'
+implementation 'vn.payme.sdk:payme-sdk:0.2.0'
 // thư viện kèm theo
 implementation 'com.android.volley:volley:1.1.1'
 implementation 'org.greenrobot:eventbus:3.0.0'
@@ -97,6 +97,30 @@ Trước khi sử dụng PayME SDK cần gọi phương thức khởi tạo mộ
 import vn.payme.sdk.model.Env
 val configColor = arrayOf<String>("#75255b","#9d455f"}
 val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKey, configColor, Env.SANDBOX)
+
+```
+
+### login()
+
+Dùng để login
+
+Login thành công rồi gọi các chức năng khác của sdk
+
+```kotlin
+public fun login(
+  onSuccess:(JSONObject)->Unit,
+  onError: (JSONObject?, Int?, String) -> Unit
+}
+VD
+public fun loginExample(){
+  payme.loggin(onSuccess = { jsonObject ->
+                    walletView.setVisibility(View.VISIBLE)
+                },
+                    onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                    })
+}
+
 ```
 
 configColor : là tham số màu để có thể thay đổi màu sắc giao dịch ví PayME, kiểu dữ liệu là chuỗi với định dạng #rrggbb. Nếu như truyền 2 màu thì giao diện PayME sẽ gradient theo 2 màu truyền vào.
@@ -121,51 +145,36 @@ Trong đó **_AES_** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn n
 
 ### Các c**hức năng của PayME SDK**
 
+###
+
 ### getAccountInfo()
 
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
 ```kotlin
-public fun getAccountInfo( 
-  onSuccess:(JSONObject)->Unit,
-  onError: (String) -> Unit) 
-}
+public fun getAccountInfo() : AccountInfo
+
 ```
+
 Ví dụ:
+
 ```kotlin
-        payme.getAccountInfo(onSuccess = { jsonObject ->
-            val OpenEWallet = jsonObject.getJSONObject("OpenEWallet")
-            val Init = OpenEWallet.getJSONObject("Init")
+val accountInfo =   payme.getAccountInfo()
+if(accountInfo.accountActiveSuccess){
+  //Tài khoản đã được kích hoạt
+  //Có thể kiểm tra số dư tài khoản
+}
+if(accountInfo.accountKycSuccess){
+    //Tài khoản đã được định danh
+    //Có thể Thanh toán,nạp,rút
+}
 
-            val isExistInMainWallet = Init.optBoolean("isExistInMainWallet")
-//            Cần phải Register hay không, hay chỉ Login của người dùng ( false -> gọi register, true -> gọi login)
-
-            val succeeded = Init.optBoolean("succeeded")
-//            Kết quả (có tồn tại account hay chưa )
-
-            val kyc = Init.optJSONObject("kyc")
-            if (kyc != null) {
-                val state = kyc.optString("kyc")
-//            APPROVED
-//            Đã duyệt
-//            REJECTED
-//            Đã từ chối
-//            PENDING
-//            Chờ duyệt
-//            CANCELED
-//            Đã huỷ
-//            BANNED
-//            Bị ban do sai nhìu lần
-            }
-        }, onError = { jsonObject, code, mesage ->
-
-        })
 ```
 
 **openWallet() - Mở UI chức năng PayME tổng hợp**
 
 ```kotlin
-public fun openWallet( action: Action, amount: Int?, description : String?, extraData : String?, onSuccess: (JSONObject)->Unit, onError: (String) -> Unit )
+public fun openWallet( action: Action, amount: Int?, description : String?, extraData : String?, onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
 
 enum class Action {
   DEPOSIT, PAY, OPEN,
@@ -187,31 +196,19 @@ Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năn
 **Ví dụ :**
 
 ```kotlin
-package com.example.applicationkotlindemo
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.Button
-import org.json.JSONObject
-import vn.payme.sdk.PayME
-import vn.payme.sdk.model.Action
-import vn.payme.sdk.model.UserInfo
-class MainActivity : AppCompatActivity() {
-  val AppToken: String = "AppToken"
-  val PublicKey: String = "PublicKey"
-  val ConnectToken: String = "ConnectToken"
-  val PrivateKey: String = "PrivateKey"
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    val button: Button = findViewById(R.id.button)
-    button.setOnClickListener {
-      val payme: PayME = PayME(AppToken, PublicKey, ConnectToken, PrivateKey)
+
       payme.openWallet(this, Action.OPEN, null, null, null,
-                       onSuccess = { json: JSONObject ->  ... },
-                       onError = { message: String -> ...})
+                       onSuccess = { json: JSONObject ->   },
+                       onError = { jsonObject, code, message ->
+                                    PayME.showError(message)
+                        //Lỗi khi hết hạn đăng nhập
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme.logout()
+                        }
+                       })
     }
-  }
-}
+
 ```
 
 ### deposit() - Nạp tiền
@@ -222,7 +219,26 @@ public fun deposit(
   description : String?,
   extraData : String,
   onSuccess: (JSONObject) -> Unit,
-  onError: (String) -> Unit )
+  onError:(JSONObject?, Int?, String) -> Unit)
+VD :
+	payme.deposit(amount, null, "",
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme.logout()
+                    }
+                    //ERROR_CODE.ACCOUNT_NOT_KYC : tài khoản chưa định danh
+                    // ERROR_CODE.ACCOUNT_NOT_ACTIVETES : chưa kích hoạt
+                    //cần gọi lại hàm openWallet
+
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
+
 ```
 
 Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.Deposit.**
@@ -231,7 +247,22 @@ Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.
 
 ```kotlin
 public fun withdraw(amount: Int, description: String?, extraData: String,
-                    onSuccess: (JSONObject) -> Unit, onError: (String) -> Unit)
+                    onSuccess: (JSONObject) -> Unit, onError: (JSONObject?, Int?, String) -> Unit)
+VD
+payme.withdraw(amount, null, "",
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme.logout()
+                    }
+
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
 ```
 
 Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.Withdraw**.
@@ -242,7 +273,24 @@ Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví Pay
 
 ```kotlin
 public fun pay(amount: Int, description: String?, extraData: String,
-               onSuccess: (JSONObject) -> Unit,onError: (String) -> Unit )
+               onSuccess: (JSONObject) -> Unit,onError: (JSONObject?, Int?, String) -> Unit )
+   val amount = convertInt(moneyPay.text.toString())
+            val infoPayment =
+                InfoPayment("PAY", amount, "Nội dung đơn hàng", 4323, 1, "OpenEWallet")
+            		payme.pay(this.supportFragmentManager, infoPayment,
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme.logout()
+                    }
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                }
+            )
 ```
 
 | Tham số    | **Bắt buộc** | **Giải thích**                                                                                                                                                                                                                  |
@@ -256,7 +304,7 @@ Trong trường hợp app tích hợp cần lấy số dư để tự hiển th�
 ### getWalletInfo() - **Lấy các thông tin của ví**
 
 ```kotlin
-public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError: (String) -> Unit)
+public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, Int?, String) -> Unit)
 ```
 
 - Trong trường hợp lỗi thì hàm sẽ trả về message mỗi tại hàm onError , khi đó app có thể hiển thị balance là 0.
@@ -265,7 +313,7 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError: (String) -> Uni
 
 ```json
 {
-  "walletBalance": {
+  "Wallet": {
     "balance": 111,
     "detail": {
       "cash": 1,
