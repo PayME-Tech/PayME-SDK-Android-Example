@@ -229,7 +229,7 @@ public fun deposit(
 Ví dụ :
 
 ```kotlin
-	payme.deposit(amount, null, "",
+payme.deposit(amount, null, "",
                 onSuccess = { json: JSONObject ->
                 },
                 onError = { jsonObject, code, message ->
@@ -245,7 +245,8 @@ Ví dụ :
                     if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
                         openWallet()
                     }
-                })
+		}
+	     )
 
 ```
 
