@@ -44,7 +44,6 @@ dependencies {
   ...
   implementation 'com.android.volley:volley:1.1.1'
   implementation 'org.greenrobot:eventbus:3.0.0'
-  implementation 'com.chaos.view:pinview:1.4.4'
   implementation 'com.airbnb.android:lottie:3.0.3'
   implementation 'com.google.android.material:material:1.2.1'
   implementation 'com.google.zxing:core:3.3.3'
@@ -54,9 +53,7 @@ dependencies {
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
   implementation 'com.madgag.spongycastle:prov:1.58.0.0'
 
-  implementation 'com.android.support:multidex:1.0.3'
-  implementation 'androidx.lifecycle:lifecycle-process:2.2.0'
-
+  implementation 'com.github.GrenderG:Toasty:1.5.0'
   implementation 'com.otaliastudios:cameraview:2.6.4'
   implementation "androidx.fragment:fragment:1.2.5"
 
@@ -69,7 +66,6 @@ dependencies {
   implementation "com.theartofdev.edmodo:android-image-cropper:2.8.+"
   implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
   implementation 'androidx.appcompat:appcompat:1.2.0'
-  implementation 'org.apache.httpcomponents:httpmime:4.5.6'
 
 ...
 }
@@ -118,7 +114,9 @@ val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKe
 ```
 
 ### login()
+
 Có 2 trường hợp
+
 - Dùng để login lần đầu tiên ngay sau khi khởi tạo PayME.
 - Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED, lúc này app cần gọi login lại để lấy accessToken dùng cho các chức năng khác.
 
@@ -130,7 +128,9 @@ public fun login(
   onError: (JSONObject?, Int?, String) -> Unit
 }
 ```
+
 Ví dụ:
+
 ```kotlin
 public fun loginExample(){
   payme.loggin(onSuccess = { jsonObject ->
@@ -243,6 +243,7 @@ public fun deposit(
   onSuccess: (JSONObject) -> Unit,
   onError:(JSONObject?, Int?, String) -> Unit)
 ```
+
 Ví dụ :
 
 ```kotlin
@@ -274,8 +275,10 @@ Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.
 ```kotlin
 public fun withdraw(amount: Int, description: String?, extraData: String,
                     onSuccess: (JSONObject) -> Unit, onError: (JSONObject?, Int?, String) -> Unit)
-```		    
+```
+
 Ví dụ:
+
 ```kotlin
 payme.withdraw(amount, null, "",
                 onSuccess = { json: JSONObject ->
@@ -302,9 +305,11 @@ Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví Pay
 ```kotlin
 public fun pay(amount: Int, description: String?, extraData: String,
                onSuccess: (JSONObject) -> Unit,onError: (JSONObject?, Int?, String) -> Unit )
-	       
-```	 
+
+```
+
 Ví dụ:
+
 ```kotlin
 val amount = convertInt(moneyPay.text.toString())
 val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", 4323, 1, "OpenEWallet")
