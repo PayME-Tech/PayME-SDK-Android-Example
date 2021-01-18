@@ -285,17 +285,20 @@ Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví Pay
 ```kotlin
 public fun pay(amount: Int, description: String?, extraData: String,
                onSuccess: (JSONObject) -> Unit,onError: (JSONObject?, Int?, String) -> Unit )
-   val amount = convertInt(moneyPay.text.toString())
-            val infoPayment =
-                InfoPayment("PAY", amount, "Nội dung đơn hàng", 4323, 1, "OpenEWallet")
-            		payme.pay(this.supportFragmentManager, infoPayment,
-                onSuccess = { json: JSONObject ->
-                },
-                onError = { jsonObject, code, message ->
+	       
+```	 
+Ví dụ:
+```kotlin
+val amount = convertInt(moneyPay.text.toString())
+val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", 4323, 1, "OpenEWallet")
+payme.pay(this.supportFragmentManager, infoPayment,
+          onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
+          onError = { jsonObject, code, message ->
                     PayME.showError(message)
                     if (code == ERROR_CODE.EXPIRED) {
                         walletView.setVisibility(View.GONE)
                         payme.logout()
+			// Có thể thông báo lỗi cho user sau đó login lại để lấy lại token.
                     }
                     if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
                         openWallet()
