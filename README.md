@@ -49,10 +49,9 @@ implementation 'com.google.android.material:material:1.2.1'
 implementation 'com.google.zxing:core:3.3.3'
 implementation ('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
 implementation 'org.apache.httpcomponents:httpmime:4.5.6'
-implementation 'com.camerakit:camerakit:1.0.0-beta3.10'
-implementation 'com.camerakit:jpegkit:0.1.0'
 implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0'
-implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+implementation 'com.otaliastudios:cameraview:2.6.4'
 
 ...
 }
