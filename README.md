@@ -103,7 +103,7 @@ val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKe
 ### login()
 Có 2 trường hợp
 - Dùng để login lần đầu tiên ngay sau khi khởi tạo PayME.
-- Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED
+- Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED, lúc này app cần gọi login lại để lấy accessToken dùng cho các chức năng khác.
 
 Sau khi gọi login() thành công rồi thì mới gọi các chức năng khác của SDK ( openWallet, pay ... )
 
@@ -199,18 +199,20 @@ Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năn
 **Ví dụ :**
 
 ```kotlin
-
-      payme.openWallet(this, Action.OPEN, null, null, null,
-                       onSuccess = { json: JSONObject ->   },
-                       onError = { jsonObject, code, message ->
-                                    PayME.showError(message)
+payme.openWallet(this, Action.OPEN, null, null, null,
+	onSuccess = { json: JSONObject ->   },
+	onError = { jsonObject, code, message ->
+			PayME.showError(message)
                         //Lỗi khi hết hạn đăng nhập
                         if (code == ERROR_CODE.EXPIRED) {
                             walletView.setVisibility(View.GONE)
                             payme.logout()
-                        }
-                       })
-    }
+			    // hoặc có thể gọi payme.login() để tự động đăng nhập lại vì khi gọi login là đã có gọi payme.logout() trước.
+			    // Sau đó có thể gọi lại openWallet() để mở lại UI ví PayME.
+			}
+		   }
+		 )
+}
 
 ```
 
