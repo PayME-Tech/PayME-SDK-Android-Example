@@ -52,6 +52,7 @@ dependencies {
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
   implementation 'com.madgag.spongycastle:prov:1.58.0.0'
+  implementation 'com.squareup.picasso:picasso:2.71828'
 
   implementation 'com.github.GrenderG:Toasty:1.5.0'
   implementation 'com.otaliastudios:cameraview:2.6.4'
