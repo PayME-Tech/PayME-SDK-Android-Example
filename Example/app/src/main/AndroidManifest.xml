@@ -23,9 +23,12 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-       >
-        <activity android:name=".SettingAcitivity" android:label="Setting"  android:windowSoftInputMode="adjustPan"></activity>
+        android:theme="@style/AppTheme">
+        <activity android:name=".LogActivity" android:label="Log" ></activity>
+        <activity
+            android:name=".SettingAcitivity"
+            android:label="Setting"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".MainActivity"
             android:label="Home"
@@ -36,6 +39,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".WindowService"
+            android:enabled="true" />
     </application>
 
 </manifest>

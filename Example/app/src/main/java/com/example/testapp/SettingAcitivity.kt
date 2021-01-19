@@ -8,10 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -19,21 +16,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
-//val APP_TOKEN = "APP_TOKEN"
-//val SECRET_KEY = "SECRET_KEY"
-//val PUBLIC_KEY = "PUBLIC_KEY"
-
 class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
     private val REQUEST_OVERLAY_PERMISSION = 101
 
-    lateinit var wm: WindowManager
-    lateinit var containerButtonShowLog: LinearLayout
-    lateinit var buttonShowLog: FloatingActionButton
     lateinit var paymePref: SharedPreferences
 
     lateinit var inputToken: EditText
@@ -41,7 +31,7 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
     lateinit var inputPublicKey: EditText
     lateinit var buttonSave: Button
     lateinit var checkboxShowLog: CheckBox
-
+    lateinit var dataList: ArrayList<String>
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onEnterForeground() {
@@ -51,8 +41,12 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onEnterBackground() {
         paymePref.edit().putBoolean(ON_LOG, false).commit()
-        wm.removeViewImmediate(containerButtonShowLog)
-//        Toast.makeText(this, "haha", Toast.LENGTH_SHORT).show()
+        stopService(Intent(this, WindowService::class.java))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkboxShowLog.isChecked = paymePref.getBoolean(ON_LOG, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +55,8 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
-//        paymePref = getSharedPreferences("PaymePref", MODE_PRIVATE)
+        paymePref = getSharedPreferences("PaymePref", MODE_PRIVATE)
+
 
         inputToken = findViewById(R.id.inputToken)
         inputSecretKey = findViewById(R.id.inputSecretKey)
@@ -69,15 +64,13 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
         buttonSave = findViewById(R.id.buttonSave)
         checkboxShowLog = findViewById(R.id.checkboxShowLog)
 
-        containerButtonShowLog = LayoutInflater.from(this).inflate(R.layout.button_overlay, null) as LinearLayout
-        buttonShowLog = containerButtonShowLog.findViewById(R.id.buttonShowLog)
 
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
         }
 
-//        checkboxShowLog.isChecked = paymePref.getBoolean(ON_LOG, false)
+        checkboxShowLog.isChecked = paymePref.getBoolean(ON_LOG, false)
 
         buttonSave.setOnClickListener {
             val token = inputToken.text.toString()
@@ -93,74 +86,31 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
             }
         }
 
-        buttonShowLog.setOnClickListener{
-            val process: Process = Runtime.getRuntime().exec("logcat -d")
-            val bufferedReader = BufferedReader(
-                InputStreamReader(process.inputStream)
-            )
-
-            var log = StringBuilder()
-            var line: String? = ""
-            while (bufferedReader.readLine().also { line = it } != null) {
-                log.append(line)
-            }
-            Log.d("Show log", log.toString())
-
-        }
-        //Bắt sự kiện thay đổi trạng thái
-        //Bắt sự kiện thay đổi trạng thái
         checkboxShowLog.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b -> //Code khi trạng thái check thay đổi
-//            paymePref.edit().putBoolean(ON_LOG, b).commit()
+
             if (b) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
                     val settingIntent = Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(
                             "package:$packageName"
-                        )
+                    )
                     )
                     startActivityForResult(settingIntent, REQUEST_OVERLAY_PERMISSION)
                 } else {
-                    initWindowLayer()
+                    startService(Intent(this, WindowService::class.java))
                 }
             } else {
-                wm.removeViewImmediate(containerButtonShowLog)
+                stopService(Intent(this, WindowService::class.java))
             }
-
+            paymePref.edit().putBoolean(ON_LOG, b).commit()
         })
-
-    }
-
-    private fun initWindowLayer() {
-        wm = windowManager
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            } else {
-                WindowManager.LayoutParams.TYPE_PHONE
-            },
-            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                    or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    or WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-            or (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or 0),
-            PixelFormat.TRANSLUCENT
-        )
-        params.gravity = Gravity.BOTTOM or Gravity.START
-        wm.addView(containerButtonShowLog, params)
-//        wd.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-//        wd.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_OVERLAY_PERMISSION && Settings.canDrawOverlays(this)) {
-            initWindowLayer()
+
         }
     }
 

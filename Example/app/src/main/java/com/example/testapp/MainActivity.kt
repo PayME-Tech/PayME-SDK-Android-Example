@@ -109,10 +109,6 @@ class MainActivity : AppCompatActivity() {
                 "   wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==\n" +
                 "   -----END PUBLIC KEY-----")!!
 
-//        Log.d("Test - AppToken",AppToken)
-//        Log.d("Test - PrivateKey",PrivateKey)
-//        Log.d("Test - PublicKey",PublicKey)
-
         button = findViewById(R.id.button)
         buttonLogin = findViewById(R.id.buttonLogin)
         buttonLogout = findViewById(R.id.buttonLogout)
