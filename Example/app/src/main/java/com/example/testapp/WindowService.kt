@@ -1,34 +1,81 @@
 package com.example.testapp
 
-import android.app.IntentService
 import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.LinearGradient
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.os.Build
 import android.os.IBinder
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
+import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.*
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.localazy.quicknote.windows.registerDraggableTouchListener
 import java.io.BufferedReader
 import java.io.InputStreamReader
+
 
 class WindowService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var containerButtonShowLog: RelativeLayout
     private lateinit var buttonShowLog: Button
-//    lateinit var recycleviewLog: RecyclerView
+
+    var params = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        20, 20,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        },
+        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                or WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
+                or (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or 0),
+        PixelFormat.TRANSLUCENT
+    )
+//    params.gravity = Gravity.BOTTOM or Gravity.START
 
     companion object {
         var dataList = arrayListOf<String>()
         var showLog = false
+    }
+
+    private fun getCurrentDisplayMetrics(): DisplayMetrics {
+        val dm = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(dm)
+        return dm
+    }
+
+
+    private fun calculateSizeAndPosition(
+        widthInDp: Int,
+        heightInDp: Int
+    ) {
+        val dm = getCurrentDisplayMetrics()
+        // We have to set gravity for which the calculated position is relative.
+        params.gravity = Gravity.BOTTOM or Gravity.LEFT
+        params.width = (widthInDp * dm.density).toInt()
+        params.height = (heightInDp * dm.density).toInt()
+    }
+
+    private fun setPosition(x: Int, y: Int) {
+        params.x = x
+        params.y = y
+        update()
+    }
+
+
+    private fun update() {
+        try {
+            windowManager.updateViewLayout(containerButtonShowLog, params)
+        } catch (e: Exception) {
+            // Ignore exception for now, but in production, you should have some
+            // warning for the user here.
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -38,12 +85,6 @@ class WindowService : Service() {
     override fun onCreate() {
         initView()
         super.onCreate()
-
-
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun initView() {
@@ -54,7 +95,10 @@ class WindowService : Service() {
 
         initWindowLayer()
 
-
+        buttonShowLog.registerDraggableTouchListener(
+            initialPosition = { Point(params.x, params.y) },
+            positionListener = { x, y -> setPosition(x, y) }
+        )
         buttonShowLog.setOnClickListener {
             if (showLog) {
                 showLog = false
@@ -62,7 +106,6 @@ class WindowService : Service() {
             } else {
                 showLog = true
                 dataList.clear()
-                Log.d("tham bla blabla", "kdsfksdkf")
                 val process: Process = Runtime.getRuntime().exec("logcat -d")
                 val bufferedReader = BufferedReader(
                     InputStreamReader(process.inputStream)
@@ -86,24 +129,7 @@ class WindowService : Service() {
 
     private fun initWindowLayer() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            } else {
-                WindowManager.LayoutParams.TYPE_PHONE
-            },
-            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                    or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    or WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-                    or (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or 0),
-            PixelFormat.TRANSLUCENT
-        )
-        params.gravity = Gravity.BOTTOM or Gravity.START
+        calculateSizeAndPosition(50, 50)
         windowManager.addView(containerButtonShowLog, params)
     }
 
