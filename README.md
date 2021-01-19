@@ -39,7 +39,7 @@ allprojects {
 dependencies {
 ...
 / thư viện chính
-  implementation 'vn.payme.sdk:payme-sdk:0.2.2'
+  implementation 'vn.payme.sdk:payme-sdk:0.2.3'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
