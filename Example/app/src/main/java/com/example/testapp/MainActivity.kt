@@ -17,6 +17,7 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 
 val APP_TOKEN = "APP_TOKEN"
@@ -336,10 +337,11 @@ class MainActivity : AppCompatActivity() {
                 })
         }
         buttonPay.setOnClickListener {
+            val nextValues = List(10) { Random.nextInt(0, 100000) }
 
             val amount = convertInt(moneyPay.text.toString())
             val infoPayment =
-                InfoPayment("PAY", amount, "Nội dung đơn hàng", "4323", 1, "OpenEWallet")
+                InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet")
             payme?.pay(this.supportFragmentManager, infoPayment,
                 onSuccess = { json: JSONObject? ->
                 },

@@ -6,14 +6,14 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 
 **Một số thuật ngữ**
 
-|      | Name    | Giải thích                                                   |
-| ---- | ------- | ------------------------------------------------------------ |
-| 1    | app     | Là app mobile iOS/Android hoặc web sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME. |
-| 2    | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.     |
-| 3    | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ  |
-| 4    | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
-| 5    | RSA     | Thuật toán mã hóa dữ liệu RSA.                               |
-| 6    | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME |
+|     | Name    | Giải thích                                                                                               |
+| --- | ------- | -------------------------------------------------------------------------------------------------------- |
+| 1   | app     | Là app mobile iOS/Android hoặc web sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME.       |
+| 2   | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.                                                 |
+| 3   | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ                                              |
+| 4   | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
+| 5   | RSA     | Thuật toán mã hóa dữ liệu RSA.                                                                           |
+| 6   | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME      |
 
 **Bước 1 :**
 
@@ -21,7 +21,7 @@ Tích hợp thư viện hỗ trợ. Dung lượng 472.76 KB
 
 **File build.gradle Project**
 
-```
+```kotlin
 allprojects {
   repositories {
     google()
@@ -33,7 +33,7 @@ allprojects {
       url "https://plugins.gradle.org/m2/"
     }
   maven {
-      url "https://jitpack.io" 
+      url "https://jitpack.io"
   }
  }
 }
@@ -41,7 +41,7 @@ allprojects {
 
 - **File build.gradle Module**
 
-```
+```java
 dependencies {
 ...
 / thư viện chính
@@ -80,9 +80,9 @@ dependencies {
 
 - **Android Manifests**
 
-  ```
+  ```xml
   <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
-  
+
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.CAMERA" />
@@ -129,7 +129,7 @@ Có 2 trường hợp
 
 Sau khi gọi login() thành công rồi thì mới gọi các chức năng khác của SDK ( openWallet, pay ... )
 
-```
+```kotlin
 public fun login(
   onSuccess:(JSONObject)->Unit,
   onError: (JSONObject?, Int?, String) -> Unit
@@ -138,7 +138,7 @@ public fun login(
 
 Ví dụ:
 
-```
+```kotlin
 public fun loginExample(){
   payme.loggin(onSuccess = { jsonObject ->
                     walletView.setVisibility(View.VISIBLE)
@@ -157,33 +157,33 @@ Cách tạo **connectToken**:
 
 connectToken cần để truyền gọi api từ tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
 
-```
+```kotlin
 connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "0909998877" }" + secretKey )
 ```
 
-| **Tham số**   | **Bắt buộc** | **Giải thích**                                               |
-| ------------- | ------------ | ------------------------------------------------------------ |
-| **timestamp** | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout cùa connectToken. Ví dụ 2021-01-20T06:53:07.621Z |
-| ***userId\*** | Yes          | là giá trị cố định duy nhất tương ứng với mỗi tài khoản khách hàng ở dịch vụ, thường giá trị này do server hệ thống được tích hợp cấp cho PayME SDK |
-| ***phone\***  | No           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null |
+| **Tham số**    | **Bắt buộc** | **Giải thích**                                                                                                                                      |
+| -------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **timestamp**  | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout cùa connectToken. Ví dụ 2021-01-20T06:53:07.621Z         |
+| **\*userId\*** | Yes          | là giá trị cố định duy nhất tương ứng với mỗi tài khoản khách hàng ở dịch vụ, thường giá trị này do server hệ thống được tích hợp cấp cho PayME SDK |
+| **\*phone\***  | No           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null                         |
 
-Trong đó ***AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
 ### Các c**hức năng của PayME SDK**
 
-### 
+###
 
 ### getAccountInfo()
 
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
-```
+```kotlin
 public fun getAccountInfo() : AccountInfo
 ```
 
 Ví dụ:
 
-```
+```kotlin
 val accountInfo =   payme.getAccountInfo()
 if(accountInfo.accountActiveSuccess){
   //Tài khoản đã được kích hoạt
@@ -197,7 +197,7 @@ if(accountInfo.accountKycSuccess){
 
 **openWallet() - Mở UI chức năng PayME tổng hợp**
 
-```
+```kotlin
 public fun openWallet( action: Action, amount: Int?, description : String?, extraData : String?, onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
 
 enum class Action {
@@ -207,19 +207,19 @@ enum class Action {
 
 Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
 
-| **Tham số** | **Bắt buộc** | **Giải thích**                                               |
-| ----------- | ------------ | ------------------------------------------------------------ |
-| contex      | Yes          | context để PayME SDK dựa vào đó tự mở giao diện của PayME lên. |
+| **Tham số** | **Bắt buộc** | **Giải thích**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| contex      | Yes          | context để PayME SDK dựa vào đó tự mở giao diện của PayME lên.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | action      | Yes          | Open : Dùng để mở giao diện ví PayME WebView và không thực hiện hành động nào đặc biệt. Deposit : Dùng để mở giao diện ví PayME và thực hiện chức năng nạp tiền PayME sẽ xử lý và có thông báo thành công thất bại trên UI của PayME. Ngoài ra sẽ trả về cho app tích hợp kết quả nếu muốn tự hiển thị và xử lý trên app. Withdraw: Dùng để mở giao diện ví PayME và thực hiện chức năng rút tiền PayME sẽ xử lý và có thông báo thành công thất bại trên UI của PayME. Ngoài ra sẽ trả về cho app tích hợp kết quả nếu muốn tự hiển thị và xử lý trên app. |
-| amount      | No           | Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền |
-| description | No           | Truyền mô tả của giao dịch nếu có                            |
-| extraData   | No           | Khi thực hiện Deposit hoặc Withdraw thì app tích hợp cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend app tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết đối với hệ thống app tích hợp. |
-| onSuccess   | Yes          | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
-| onError     | Yes          | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+| amount      | No           | Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| description | No           | Truyền mô tả của giao dịch nếu có                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| extraData   | No           | Khi thực hiện Deposit hoặc Withdraw thì app tích hợp cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend app tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết đối với hệ thống app tích hợp.                                                                                                                                                                                                                                                                        |
+| onSuccess   | Yes          | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| onError     | Yes          | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 **Ví dụ :**
 
-```
+```kotlin
 payme.openWallet(this, Action.OPEN, null, null, null,
 	onSuccess = { json: JSONObject ->   },
 	onError = { jsonObject, code, message ->
@@ -238,7 +238,7 @@ payme.openWallet(this, Action.OPEN, null, null, null,
 
 ### deposit() - Nạp tiền
 
-```
+```kotlin
 public fun deposit(
   amount : Int,
   description : String?,
@@ -249,12 +249,13 @@ public fun deposit(
 
 Ví dụ :
 
-```
+```kotlin
 payme.deposit(amount, null, "",
                 onSuccess = { json: JSONObject ->
                 },
                 onError = { jsonObject, code, message ->
-                    PayME.showError(message)
+
+		    ME.showError(message)
                     if (code == ERROR_CODE.EXPIRED) {
                         walletView.setVisibility(View.GONE)
                         payme.logout()
@@ -274,14 +275,14 @@ Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.
 
 ### withdraw() - Rút tiền
 
-```
+```kotlin
 public fun withdraw(amount: Int, description: String?, extraData: String,
                     onSuccess: (JSONObject) -> Unit, onError: (JSONObject?, Int?, String) -> Unit)
 ```
 
 Ví dụ:
 
-```
+```kotlin
 payme.withdraw(amount, null, "",
                 onSuccess = { json: JSONObject ->
                 },
@@ -304,16 +305,29 @@ Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.
 
 Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví PayME đã được kích hoạt.
 
-```
-public fun pay(amount: Int, description: String?, extraData: String,
-               onSuccess: (JSONObject) -> Unit,onError: (JSONObject?, Int?, String) -> Unit )
+```kotlin
+public fun pay(
+            fragmentManager: FragmentManager,
+            infoPayment: InfoPayment,
+            onSuccess: ((JSONObject?) -> Unit)?,
+            onError: ((JSONObject?, Int?, String) -> Unit)?,
+        )
 ```
 
 Ví dụ:
 
-```
+```kotlin
 val amount = convertInt(moneyPay.text.toString())
-val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", 4323, 1, "OpenEWallet")
+val nextValues = List(10) { Random.nextInt(0, 100000) }
+val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet")
+
+- action: loại giao dịch ( 'PAYMENT' => thanh toán)
+- amount: số tiền thanh toán
+- note: Mô tả giao dịch từ phía đối tác
+- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
+- type: OpenEWallet
+
 payme.pay(this.supportFragmentManager, infoPayment,
           onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
           onError = { jsonObject, code, message ->
@@ -330,24 +344,24 @@ payme.pay(this.supportFragmentManager, infoPayment,
             )
 ```
 
-| Tham số    | **Bắt buộc** | **Giải thích**                                               |
-| ---------- | ------------ | ------------------------------------------------------------ |
-| amount     | Yes          | Số tiền cần thanh toán bên app truyền qua cho SDK            |
-| descriptio | No           | Mô tả nếu có                                                 |
+| Tham số    | **Bắt buộc** | **Giải thích**                                                                                                                                                                                                                  |
+| ---------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| amount     | Yes          | Số tiền cần thanh toán bên app truyền qua cho SDK                                                                                                                                                                               |
+| descriptio | No           | Mô tả nếu có                                                                                                                                                                                                                    |
 | extraData  | Yes          | Khi thực hiện thanh toans thì app cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết. |
 
 Trong trường hợp app tích hợp cần lấy số dư để tự hiển thị lên UI trên app thì có thể dùng hàm, hàm này không hiển thị UI của PayME SDK
 
 ### getWalletInfo() - **Lấy các thông tin của ví**
 
-```
+```kotlin
 public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, Int?, String) -> Unit)
 ```
 
 - Trong trường hợp lỗi thì hàm sẽ trả về message mỗi tại hàm onError , khi đó app có thể hiển thị balance là 0.
 - Trong trường hợp thành công SDK trả về thông tin như sau:
 
-```
+```kotlin
 {
   "Wallet": {
     "balance": 111,
@@ -359,10 +373,10 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, In
 }
 ```
 
-***balance\*** : App tích hợp có thể sử dụng giá trị trong key balance để hiển thị, các field khác hiện tại chưa dùng.
+**\*balance\*** : App tích hợp có thể sử dụng giá trị trong key balance để hiển thị, các field khác hiện tại chưa dùng.
 
-***detail.cash :\*** Tiền có thể dùng
+**\*detail.cash :\*** Tiền có thể dùng
 
-***detail.lockCash:\*** tiền bị lock
+**\*detail.lockCash:\*** tiền bị lock
 
 <details class="details-reset details-overlay details-overlay-dark" id="jumpto-line-details-dialog" style="box-sizing: border-box; display: block;"><summary data-hotkey="l" aria-label="Jump to line" role="button" style="box-sizing: border-box; display: list-item; cursor: pointer; list-style: none;"></summary></details>
