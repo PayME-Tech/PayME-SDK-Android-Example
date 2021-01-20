@@ -164,7 +164,8 @@ connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "090999
 
 | **Tham số**   | **Bắt buộc** | **Giải thích**                                                                                                                                           |
 | :------------ | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **timestamp** | Yes          | Thời gian tạo ra connectToken theo định danh Unix time, Dùng để xác định thời gian timeout cùa connectToken. xem https://en.wikipedia.org/wiki/Unix_time |
+| **timestamp** | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601, Dùng để xác định thời gian timeout cùa connectToken.  Ví dụ :
+2021-01-20T06:53:07.621Z |
 | **_userId_**  | Yes          | là giá trị cố định duy nhất tương ứng với mỗi tài khoản khách hàng ở dịch vụ, thường giá trị này do server hệ thống được tích hợp cấp cho PayME SDK      |
 | **_phone_**   | No           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null                              |
 
