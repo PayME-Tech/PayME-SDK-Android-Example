@@ -22,7 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6fd693e7-5eb2-4c4b-8c64-04a087802299" name="Default Changelist" comment="" />
+    <list default="true" id="6fd693e7-5eb2-4c4b-8c64-04a087802299" name="Default Changelist" comment="update doc" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,6 +50,14 @@
       <option name="presentableId" value="Default" />
       <updated>1610957291756</updated>
     </task>
+    <task id="LOCAL-00001" summary="update doc">
+      <created>1610970373019</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1610970373019</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -64,10 +72,14 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update doc" />
+    <option name="LAST_COMMIT_MESSAGE" value="update doc" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="2193" y="274" key="Vcs.Push.Dialog.v2" timestamp="1610965638207">
+    <state x="2193" y="274" key="Vcs.Push.Dialog.v2" timestamp="1610970378711">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2193" y="274" key="Vcs.Push.Dialog.v2/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1610965638207" />
+    <state x="2193" y="274" key="Vcs.Push.Dialog.v2/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1610970378711" />
   </component>
 </project>
