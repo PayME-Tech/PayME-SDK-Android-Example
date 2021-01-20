@@ -29,6 +29,12 @@ allprojects {
     maven {
       url  "https://dl.bintray.com/payme/maven"
     }
+   maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  maven {
+      url "https://jitpack.io" 
+  }
  }
 }
 ```
