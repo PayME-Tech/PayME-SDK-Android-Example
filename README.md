@@ -312,6 +312,21 @@ public fun pay(
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int?, String) -> Unit)?,
         )
+class InfoPayment {
+    var action : String? = null
+    var amount : Int? = null
+    var note : String? = null
+    var orderId : String? = null
+    var storeId : Long? = null
+    var type : String? = null
+}
+- action: loại giao dịch ( 'PAYMENT' => thanh toán)
+- amount: số tiền thanh toán
+- note: Mô tả giao dịch từ phía đối tác
+- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
+- type: OpenEWallet
+
 ```
 
 Ví dụ:
@@ -321,12 +336,7 @@ val amount = convertInt(moneyPay.text.toString())
 val nextValues = List(10) { Random.nextInt(0, 100000) }
 val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet")
 
-- action: loại giao dịch ( 'PAYMENT' => thanh toán)
-- amount: số tiền thanh toán
-- note: Mô tả giao dịch từ phía đối tác
-- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
-- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
-- type: OpenEWallet
+
 
 payme.pay(this.supportFragmentManager, infoPayment,
           onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
