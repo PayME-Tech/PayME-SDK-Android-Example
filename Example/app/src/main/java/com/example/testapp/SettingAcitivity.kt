@@ -29,9 +29,10 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
     lateinit var inputToken: EditText
     lateinit var inputSecretKey: EditText
     lateinit var inputPublicKey: EditText
+    lateinit var inputPrivateKey: EditText
     lateinit var buttonSave: Button
     lateinit var checkboxShowLog: CheckBox
-    lateinit var dataList: ArrayList<String>
+    lateinit var buttonRestore: Button
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onEnterForeground() {
@@ -63,7 +64,13 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
         inputPublicKey = findViewById(R.id.inputPublicKey)
         buttonSave = findViewById(R.id.buttonSave)
         checkboxShowLog = findViewById(R.id.checkboxShowLog)
+        buttonRestore = findViewById(R.id.buttonRestore)
+        inputPrivateKey = findViewById(R.id.inputPrivateKey)
 
+        inputSecretKey.setText(MainActivity.SecretKey)
+        inputPrivateKey.setText(MainActivity.PrivateKey)
+        inputPublicKey.setText(MainActivity.PublicKey)
+        inputToken.setText(MainActivity.AppToken)
 
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -76,13 +83,18 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
             val token = inputToken.text.toString()
             val secretKey = inputSecretKey.text.toString()
             val publicKey = inputPublicKey.text.toString()
-            if(token.length > 0 && secretKey.length > 0 && publicKey.length > 0){
+            val privateKey = inputPrivateKey.text.toString()
+            if(token.length > 0 && secretKey.length > 0 && publicKey.length > 0 && privateKey.length > 0){
                 paymePref.edit().putString(APP_TOKEN, token).commit()
                 paymePref.edit().putString(SECRET_KEY, secretKey).commit()
                 paymePref.edit().putString(PUBLIC_KEY, publicKey).commit()
+                paymePref.edit().putString(PRIVATE_KEY, privateKey).commit()
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                MainActivity.AppToken = token
+                MainActivity.PublicKey = publicKey
+                MainActivity.PrivateKey = privateKey
+                MainActivity.SecretKey = secretKey
+                finish()
             }
         }
 
@@ -104,6 +116,24 @@ class SettingAcitivity : AppCompatActivity(), LifecycleObserver {
             }
             paymePref.edit().putBoolean(ON_LOG, b).commit()
         })
+
+        buttonRestore.setOnClickListener {
+
+            paymePref.edit().putString(APP_TOKEN, APP_TOKEN_DEFAULT).commit()
+            paymePref.edit().putString(SECRET_KEY, SECRET_KEY_DEFAULT).commit()
+            paymePref.edit().putString(PUBLIC_KEY, PUBLIC_KEY_DEFAULT).commit()
+            paymePref.edit().putString(PRIVATE_KEY, PRIVATE_KEY_DEFAULT).commit()
+
+            MainActivity.AppToken = APP_TOKEN_DEFAULT
+            MainActivity.PublicKey = PUBLIC_KEY_DEFAULT
+            MainActivity.PrivateKey = PRIVATE_KEY_DEFAULT
+            MainActivity.SecretKey = SECRET_KEY_DEFAULT
+
+            inputSecretKey.setText(MainActivity.SecretKey)
+            inputPrivateKey.setText(MainActivity.PrivateKey)
+            inputPublicKey.setText(MainActivity.PublicKey)
+            inputToken.setText(MainActivity.AppToken)
+        }
 
     }
 

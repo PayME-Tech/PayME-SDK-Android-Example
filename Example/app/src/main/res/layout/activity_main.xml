@@ -87,6 +87,11 @@
             android:orientation="horizontal"
             android:layout_marginTop="30dp"
             android:weightSum="2">
+            <ProgressBar
+                android:id="@+id/loading"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/buttonLogin"
                 android:layout_width="0dp"

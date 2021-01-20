@@ -7,31 +7,59 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import org.json.JSONObject
 import vn.payme.sdk.PayME
-import vn.payme.sdk.model.Action
-import vn.payme.sdk.model.Env
-import java.security.PublicKey
+import vn.payme.sdk.model.*
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 val APP_TOKEN = "APP_TOKEN"
-val SECRET_KEY = "SECRET_KEY"
 val PUBLIC_KEY = "PUBLIC_KEY"
 val ON_LOG = "ON_LOG"
+val SECRET_KEY = "SECRET_KEY"
+val PRIVATE_KEY = "PRIVATE_KEY"
+val APP_PHONE = "APP_PHONE"
+val APP_USER_ID = "APP_USER_ID"
+val APP_TOKEN_DEFAULT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6NH0.U60jaOwKcaQ6bUX-6O21RMOoFR_5ZkjpGgj6rus0r60"
+val PUBLIC_KEY_DEFAULT = "-----BEGIN PUBLIC KEY-----\n" +
+        "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMwvSFz/mOfxBSVkGeqfRv3oQaCsx9V2\n" +
+        "hqdL4Y0PK+r2P+8Jd9pOS61uehd1gsjU1/xMFHWFGKrH6lO8+TSLGukCAwEAAQ==\n" +
+        "-----END PUBLIC KEY-----"
+val SECRET_KEY_DEFAULT = "zfQpwE6iHbOeAfgX"
+val PRIVATE_KEY_DEFAULT = "-----BEGIN RSA PRIVATE KEY-----\n" +
+        "MIIBOgIBAAJBAIpXByu/SQKImCFT5xTyqLe6zcqDAL/aapD4kYueJiSTFQYzobNx\n" +
+        "UA7wRqsljHGfouFXB0gguiPjtoRWgY9XMpMCAwEAAQJALQVFgCcwS3LIj5AOk/Kk\n" +
+        "laZlcpJPnCAoriU2uIkvQJdijzoz6baxQDY5xfxwBh7wExmKGvUWxR/qt7ULVf1a\n" +
+        "AQIhAMVtGD6vc0zVBuIoWFE2RDYt28WN37p5zC1NtpRebnzjAiEAs2I4WSyUQSzD\n" +
+        "P0yR0P+khUI/8oy/iZ/VSASAxzmjkpECIQCTRaZoXIkuL1tLKb14F3saz2q6G/Nh\n" +
+        "L6pXwTkJxMe28QIgTiPG7/FfU1SwaG5uRmBVxkapnHp7JPQe8BQmFKKjAkECIBM4\n" +
+        "Hel54r1RnKQVUtiLphlZgesayKzrtK2kAgssWKi1\n" +
+        "-----END RSA PRIVATE KEY-----"
+
 
 class MainActivity : AppCompatActivity() {
-    lateinit var AppToken: String
-    lateinit var PrivateKey: String
-    lateinit var PublicKey: String
-    lateinit var payme: PayME
-    lateinit var context: Context
+    companion object {
 
-   fun convertInt(amount: String): Int {
+        var AppToken: String = APP_TOKEN_DEFAULT
+        var PrivateKey: String = PRIVATE_KEY_DEFAULT
+        var SecretKey: String = SECRET_KEY_DEFAULT
+        var PublicKey: String = PUBLIC_KEY_DEFAULT
+
+        var payme: PayME? = null
+        lateinit var context: Context
+        var env = Env.DEV
+        lateinit var paymePref: SharedPreferences
+        var showLog: Boolean = false
+    }
+
+
+    fun convertInt(amount: String): Int {
         try {
             return Integer.parseInt(amount)
 
@@ -40,6 +68,21 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    fun openWallet() {
+        payme?.openWallet(
+            Action.OPEN, null, null, null,
+            onSuccess = { json: JSONObject? ->
+            },
+            onError = { jsonObject, code, message ->
+                PayME.showError(message)
+                if (code == ERROR_CODE.EXPIRED) {
+                    walletView.setVisibility(View.GONE)
+                    payme?.logout()
+                }
+
+            })
     }
 
 
@@ -59,55 +102,45 @@ class MainActivity : AppCompatActivity() {
     lateinit var walletView: LinearLayout
     lateinit var buttonSetting: ImageView
     lateinit var spinnerEnvironment: Spinner
+    lateinit var loading: ProgressBar
 
-    var ConnectToken: String = "qBpM18YIyB15rdpFFfJpzsUBXNkaQ9rnCAN3asLNCrmEgQoS9YlhEVL8iQWT+6hhLSMs/C6uBUXxqD1PN33yhtfisiynwC1TeGV8TuT5bcdsSdgR+il/apjp886i1HJ3"
+    var ConnectToken: String =
+        "qBpM18YIyB15rdpFFfJpzsUBXNkaQ9rnCAN3asLNCrmEgQoS9YlhEVL8iQWT+6hhLSMs/C6uBUXxqD1PN33yhtfisiynwC1TeGV8TuT5bcdsSdgR+il/apjp886i1HJ3"
 
     fun updateWalletInfo() {
 
-        payme.getWalletInfo(onSuccess = { jsonObject ->
+        payme?.getWalletInfo(onSuccess = { jsonObject ->
             println("onSuccess=" + jsonObject.toString())
-            val walletBalance = jsonObject.getJSONObject("walletBalance")
+            val walletBalance = jsonObject.getJSONObject("Wallet")
             val balance = walletBalance.get("balance")
             val decimal = DecimalFormat("#,###")
             textView.text = "${decimal.format(balance)}đ"
         }, onError = { jsonObject, code, message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-
-            println("onError=" + message)
+            PayME.showError(message)
+            if (code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                openWallet()
+            }
         })
 
     }
 
-    fun getEnviromentSelected(value: String): Env {
-        if(value === "DEV"){
-            return Env.TEST
-        }else if(value === "Production"){
-            return Env.PRODUCTION
-        }
-        return Env.SANDBOX
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         context = this
         setContentView(R.layout.activity_main)
+        paymePref = getSharedPreferences("PaymePref", MODE_PRIVATE)
 
-        val paymePref = getSharedPreferences("PaymePref", MODE_PRIVATE)
-        AppToken = paymePref.getString(APP_TOKEN, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MX0.wNtHVZ-olKe7OAkgLigkTSsLVQKv_YL9fHKzX9mn9II")!!
-        PrivateKey = paymePref.getString(SECRET_KEY, "-----BEGIN PRIVATE KEY-----\n" +
-                "    MIIBPAIBAAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKiwIhTJpAi1XnbfOSrW/Eb\n" +
-                "    w6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQJBAJSfTrSCqAzyAo59Ox+m\n" +
-                "    Q1ZdsYWBhxc2084DwTHM8QN/TZiyF4fbVYtjvyhG8ydJ37CiG7d9FY1smvNG3iDC\n" +
-                "    dwECIQDygv2UOuR1ifLTDo4YxOs2cK3+dAUy6s54mSuGwUeo4QIhAK7SiYDyGwGo\n" +
-                "    CwqjOdgOsQkJTGoUkDs8MST0MtmPAAs9AiEAjLT1/nBhJ9V/X3f9eF+g/bhJK+8T\n" +
-                "    KSTV4WE1wP0Z3+ECIA9E3DWi77DpWG2JbBfu0I+VfFMXkLFbxH8RxQ8zajGRAiEA\n" +
-                "    8Ly1xJ7UW3up25h9aa9SILBpGqWtJlNQgfVKBoabzsU=\n" +
-                "    -----END PRIVATE KEY-----")!!
-        PublicKey = paymePref.getString(PUBLIC_KEY, "-----BEGIN PUBLIC KEY-----\n" +
-                "   MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKi\n" +
-                "   wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==\n" +
-                "   -----END PUBLIC KEY-----")!!
+        // Get value of keys
+        SecretKey = paymePref.getString(SECRET_KEY, SECRET_KEY_DEFAULT)!!
+        PrivateKey = paymePref.getString(PRIVATE_KEY, PRIVATE_KEY_DEFAULT)!!
+        PublicKey = paymePref.getString(PUBLIC_KEY, PUBLIC_KEY_DEFAULT)!!
+        AppToken = paymePref.getString(APP_TOKEN, APP_TOKEN_DEFAULT)!!
+        showLog = paymePref.getBoolean(ON_LOG, false)!!
+
+        val userId = paymePref.getString(APP_USER_ID, "1001")
+        val phoneNumber = paymePref.getString(APP_PHONE, "0929000200")
 
         button = findViewById(R.id.button)
         buttonLogin = findViewById(R.id.buttonLogin)
@@ -115,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         buttonSetting = findViewById(R.id.buttonSetting)
         buttonReload = findViewById(R.id.buttonReload)
         buttonDeposit = findViewById(R.id.buttonDeposit)
+        loading = findViewById(R.id.loading)
         buttonWithdraw = findViewById(R.id.buttonWithdraw)
         buttonPay = findViewById(R.id.buttonPay)
         textView = findViewById(R.id.textBalance)
@@ -125,10 +159,21 @@ class MainActivity : AppCompatActivity() {
         moneyWithdraw = findViewById(R.id.moneyWithdraw)
         walletView = findViewById(R.id.walletView)
         spinnerEnvironment = findViewById(R.id.enviromentSpiner)
+        inputUserId.setText(userId)
+        inputPhoneNumber.setText(phoneNumber)
 
+        inputUserId.addTextChangedListener {
+            if (walletView.visibility == View.VISIBLE) {
+                walletView.visibility = View.GONE
+            }
+        }
+        inputPhoneNumber.addTextChangedListener {
+            if (walletView.visibility == View.VISIBLE) {
+                walletView.visibility = View.GONE
+            }
+        }
         var configColor = arrayOf<String>("#75255b", "#9d455f")
-        this.payme =
-                PayME(this, AppToken, PublicKey, ConnectToken, PrivateKey, configColor, Env.SANDBOX)
+
 
         buttonReload.setOnClickListener {
             if (ConnectToken.length > 0) {
@@ -136,13 +181,47 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        var list = arrayListOf<String>()
+        list.add(Env.DEV.toString())
+        list.add(Env.PRODUCTION.toString())
+        list.add(Env.SANDBOX.toString())
+        val spinnerAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, list)
+        spinnerEnvironment.adapter = spinnerAdapter
 
+        spinnerEnvironment.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?,
+                selectedItemView: View,
+                position: Int,
+                id: Long
+            ) {
+                //đối số postion là vị trí phần tử trong list Data
+
+                if (list.get(position) == Env.SANDBOX.toString()) {
+                    env = Env.SANDBOX
+                }
+                if (list.get(position) == Env.DEV.toString()) {
+                    env = Env.DEV
+                }
+                if (list.get(position) == Env.PRODUCTION.toString()) {
+                    env = Env.PRODUCTION
+                }
+                walletView.visibility = View.GONE
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+            }
+        })
         buttonLogin.setOnClickListener {
-            if (inputUserId.text.toString().length > 0 && inputPhoneNumber.text.toString().length >= 10) {
+            Log.d("TESTAA AppToken Login", AppToken)
+            Log.d("TESTAA PublicKey Login", PublicKey)
+            Log.d("TESTAA PrivateKey Login", PrivateKey)
+            Log.d("TESTAA SecretKey Login", SecretKey)
+            if (inputUserId.text.toString().length > 0 && (inputPhoneNumber.text.toString().length == 10 || inputPhoneNumber.text.toString().length == 0) && loading.visibility != View.VISIBLE) {
                 val params: MutableMap<String, Any> = mutableMapOf()
                 val tz = TimeZone.getTimeZone("UTC")
                 val df: DateFormat =
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") // Quoted "Z" to indicate UTC, no timezone offset
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") // Quoted "Z" to indicate UTC, no timezone offset
 
                 df.setTimeZone(tz)
                 val nowAsISO: String = df.format(Date())
@@ -150,100 +229,144 @@ class MainActivity : AppCompatActivity() {
                 val dataExample =
                     "{\"userId\":\"${inputUserId.text.toString()}\",\"timestamp\":\"${nowAsISO}\",\"phone\":\"${inputPhoneNumber.text.toString()}\"}"
 
-                val connectToken = CryptoAES.encrypt(dataExample, "3zA9HDejj1GnyVK0")
-                Log.d("connectToken",connectToken)
+                val connectToken = CryptoAES.encrypt(dataExample, SecretKey)
                 ConnectToken = connectToken
-                Toast.makeText(
-                    context,
-                    "Đăng ký Connect Token thành công",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                this.payme =
+                loading.visibility = View.VISIBLE
+                payme =
                     PayME(
                         this,
                         AppToken,
                         PublicKey,
                         ConnectToken,
                         PrivateKey,
-                        configColor, getEnviromentSelected(spinnerEnvironment.selectedItem.toString())
+                        configColor,
+                        env,
+                        showLog
                     )
+                payme?.login(onSuccess = { jsonObject ->
+                    loading.visibility = View.GONE
+                    paymePref.edit().putString(APP_USER_ID, inputUserId.text.toString()).commit()
+                    paymePref.edit().putString(APP_PHONE, inputPhoneNumber.text.toString())
+                        .commit()
+                    walletView.setVisibility(View.VISIBLE)
+                    Toast.makeText(
+                        context,
+                        "Đăng ky ConnectToken thành công",
+                        Toast.LENGTH_LONG
+                    ).show()
+                },
+                    onError = { jsonObject, code, message ->
+                        loading.visibility = View.GONE
+                        PayME.showError(message)
 
-                walletView.setVisibility(View.VISIBLE)
+                    })
+
 
             }
+
+
         }
 
+
+
         buttonLogout.setOnClickListener {
-            inputPhoneNumber.text = null
-            inputUserId.text = null
-            walletView.setVisibility(View.GONE)
+            if (payme != null) {
+                payme?.logout()
+                inputPhoneNumber.text = null
+                inputUserId.text = null
+                walletView.setVisibility(View.GONE)
+            }
+
         }
 
         button.setOnClickListener {
             if (ConnectToken.length > 0) {
-                payme.openWallet(
+                payme?.openWallet(
                     Action.OPEN, null, null, null,
-                    onSuccess = { json: JSONObject ->
-                        println("onSuccess2222" + json.toString())
+                    onSuccess = { json: JSONObject? ->
                     },
-                    onError = { message: String ->
-                        println("onError" + message)
+                    onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
                     })
             }
 
 
         }
-        buttonDeposit.setOnClickListener {
-            if (ConnectToken.length > 0) {
 
-                val amount = convertInt(moneyDeposit.text.toString())
-                payme.openWallet(Action.DEPOSIT, amount, null, null,
-                    onSuccess = { json: JSONObject ->
-                        println("onSuccess2222" + json.toString())
-                    },
-                    onError = { message: String ->
-                        println("onError" + message)
-                    })
-            }
+        buttonDeposit.setOnClickListener {
+
+
+            val amount = convertInt(moneyDeposit.text.toString())
+            payme?.deposit(amount, null, "",
+                onSuccess = { json: JSONObject? ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme?.logout()
+                    }
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
+
 
         }
         buttonWithdraw.setOnClickListener {
-            if (ConnectToken.length > 0) {
 
-                val amount = convertInt(moneyWithdraw.text.toString())
+            val amount = convertInt(moneyWithdraw.text.toString())
 
-                payme.openWallet(Action.WITHDRAW, amount, null, null,
-                    onSuccess = { json: JSONObject ->
-                        println("onSuccess2222" + json.toString())
-                    },
-                    onError = { message: String ->
-                        println("onError" + message)
-                    })
-            }
-        }
-
-        buttonPay.setOnClickListener {
-            if (ConnectToken.length > 0) {
-                val amount = convertInt(moneyPay.text.toString())
-                payme.pay(this.supportFragmentManager, amount, "Merchant ghi chú đơn hàng", "", "",
-                    onSuccess = { json: JSONObject ->
-                        println("onSuccess2222" + json.toString())
-                    },
-                    onError = { message: String ->
-                        println("onError" + message)
-                    },
-                    onClose = {
-                        println("CLOSE")
+            payme?.withdraw(amount, null, "",
+                onSuccess = { json: JSONObject? ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme?.logout()
                     }
-                )
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
+        }
+        buttonPay.setOnClickListener {
 
-            }
+            val amount = convertInt(moneyPay.text.toString())
+            val infoPayment =
+                InfoPayment("PAY", amount, "Nội dung đơn hàng", "4323", 1, "OpenEWallet")
+            payme?.pay(this.supportFragmentManager, infoPayment,
+                onSuccess = { json: JSONObject? ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme?.logout()
+                    }
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                }
+            )
         }
 
         buttonSetting.setOnClickListener {
             val intent = Intent(this, SettingAcitivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("TESTAA AppToken", AppToken)
+        Log.d("TESTAA PublicKey", PublicKey)
+        Log.d("TESTAA PrivateKey", PrivateKey)
+        Log.d("TESTAA SecretKey", SecretKey)
     }
 }

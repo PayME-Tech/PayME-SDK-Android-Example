@@ -5,13 +5,13 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.text.ClipboardManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import vn.payme.sdk.PayME
 
 
 internal class AdapterRecycleviewLog(private var dataList: List<String>) :
@@ -19,14 +19,17 @@ internal class AdapterRecycleviewLog(private var dataList: List<String>) :
     lateinit var adapterContext: Context
 
     internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnLongClickListener {
-        val logText: TextView = view.findViewById(R.id.textLog)
+        val titleLogText: TextView = view.findViewById(R.id.textTitleLog)
+        val contentLogText: TextView = view.findViewById(R.id.textContentLog)
+        val logItem: LinearLayout = view.findViewById(R.id.logItem)
 
         init {
-            logText.setOnLongClickListener(this)
+            logItem.setOnLongClickListener(this)
         }
 
         override fun onLongClick(v: View?): Boolean {
             setClipboard(adapterContext, dataList[adapterPosition])
+//            PayME.showError("Copied successfully")
             return true
         }
     }
@@ -40,16 +43,12 @@ internal class AdapterRecycleviewLog(private var dataList: List<String>) :
                 false
             )
         )
+
     }
 
     override fun onBindViewHolder(holder: AdapterRecycleviewLog.MyViewHolder, position: Int) {
-        if(position % 2 == 0){
-            holder.logText.setBackgroundColor(Color.parseColor("#F1F1F1"))
-        }else{
-            holder.logText.setBackgroundColor(Color.parseColor("#CBCBCC"))
-        }
-        holder.logText.text = dataList[position]
-
+        holder.titleLogText.text = "Log${position}"
+        holder.contentLogText.text = dataList[position]
     }
 
     override fun getItemCount(): Int {
