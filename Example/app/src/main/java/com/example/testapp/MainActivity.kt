@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import org.json.JSONObject
 import vn.payme.sdk.PayME
+import vn.payme.sdk.enums.Action
+import vn.payme.sdk.enums.ERROR_CODE
+import vn.payme.sdk.enums.Env
 import vn.payme.sdk.model.*
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -341,12 +344,14 @@ class MainActivity : AppCompatActivity() {
 
             val amount = convertInt(moneyPay.text.toString())
             val infoPayment =
-                InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet")
+                InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet","")
             payme?.pay(this.supportFragmentManager, infoPayment,
                 onSuccess = { json: JSONObject? ->
                 },
                 onError = { jsonObject, code, message ->
-                    PayME.showError(message)
+                    if(message!=null && message.length>0){
+                        PayME.showError(message)
+                    }
                     if (code == ERROR_CODE.EXPIRED) {
                         walletView.setVisibility(View.GONE)
                         payme?.logout()

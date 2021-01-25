@@ -319,6 +319,7 @@ class InfoPayment {
     var orderId : String? = null
     var storeId : Long? = null
     var type : String? = null
+    var referExtraData : String? = null
 }
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
 - amount: số tiền thanh toán
@@ -326,6 +327,8 @@ class InfoPayment {
 - orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
 - storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
 - type: OpenEWallet
+- referExtraData: Thông tin bổ sung (extraData) là một nội dung được định nghĩa theo dạng chuỗi, chứa thông tin bổ sung của một giao dịch mà đối tác muốn nhận về khi hoàn tất một giao dịch với PAYME.
+nếu Merchant ko cần IPN thêm data custom của mình có thể bỏ qua
 
 ```
 
@@ -334,7 +337,7 @@ Ví dụ:
 ```kotlin
 val amount = convertInt(moneyPay.text.toString())
 val nextValues = List(10) { Random.nextInt(0, 100000) }
-val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet")
+val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet,"")
 
 
 
