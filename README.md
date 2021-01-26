@@ -178,21 +178,38 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
 ```kotlin
-public fun getAccountInfo() : AccountInfo
+public fun getAccountInfo(
+        onSuccess: (JSONObject) -> Unit,
+        onError: (JSONObject?, Int?, String) -> Unit
+        )
 ```
 
 Ví dụ:
 
 ```kotlin
-val accountInfo =   payme.getAccountInfo()
-if(accountInfo.accountActiveSuccess){
-  //Tài khoản đã được kích hoạt
-  //Có thể kiểm tra số dư tài khoản
-}
-if(accountInfo.accountKycSuccess){
-    //Tài khoản đã được định danh
-    //Có thể Thanh toán,nạp,rút
-}
+      payme.getAccountInfo(
+          onSuccess = { jsonObject ->
+            val OpenEWallet = jsonObject.getJSONObject("OpenEWallet")
+            val Init = OpenEWallet.getJSONObject("Init")
+            PayME.dataInit = Init
+            val kyc = Init.optJSONObject("kyc")
+            val appEnv = Init.optString("appEnv")
+            val succeeded = Init.optBoolean("succeeded")
+            if(succeeded){
+              //Tài khoản đã được kích hoạt
+              //Có thể kiểm tra số dư tài khoản
+            }
+
+            if (kyc != null) {
+                val state = kyc.optString("state")
+                if (state == "APPROVED") {
+                  //Tài khoản đã được định danh
+                  //Có thể Thanh toán,nạp,rút
+                }
+          },
+           onError = { jsonObject, code, message ->
+
+          })
 ```
 
 **openWallet() - Mở UI chức năng PayME tổng hợp**
