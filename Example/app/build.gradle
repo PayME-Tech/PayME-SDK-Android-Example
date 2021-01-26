@@ -82,7 +82,6 @@ dependencies {
     // Kotlin
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "com.theartofdev.edmodo:android-image-cropper:2.8.+"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
