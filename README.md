@@ -42,10 +42,24 @@ allprojects {
 - **File build.gradle Module**
 
 ```java
+android {
+    ...
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+    }
+    ...
+}
 dependencies {
 ...
 / thư viện chính
-  implementation 'vn.payme.sdk:payme-sdk:0.2.7'
+  implementation 'vn.payme.sdk:payme-sdk:0.2.8'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -70,7 +84,6 @@ dependencies {
   // Kotlin
   implementation "androidx.fragment:fragment-ktx:$fragment_version"
   implementation "androidx.cardview:cardview:1.0.0"
-  implementation "com.theartofdev.edmodo:android-image-cropper:2.8.+"
   implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
   implementation 'androidx.appcompat:appcompat:1.2.0'
 
