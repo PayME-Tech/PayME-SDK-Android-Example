@@ -132,7 +132,7 @@ Chuẩn mã hóa: RSA-512bit.
 
 Trước khi sử dụng PayME SDK cần gọi phương thức khởi tạo một lần duy nhất để khởi tạo SDK.
 
-```
+```kotlin
 import vn.payme.sdk.model.Env
 val configColor = arrayOf<String>("#75255b","#9d455f"}
 val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKey, configColor, Env.SANDBOX, false)
