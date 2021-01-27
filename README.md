@@ -90,7 +90,12 @@ dependencies {
 
 - **Android Manifests**
 
+Update như sau:
+
   ```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.app"
+          xmlns:tools="http://schemas.android.com/tools">
   <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
   <uses-permission android:name="android.permission.CAMERA" />
@@ -101,8 +106,12 @@ dependencies {
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-  <application android:requestLegacyExternalStorage="true"
+  
+  <application android:requestLegacyExternalStorage="true" >
+	       
   ```
+  
+  Tham khảo https://developer.android.com/studio/build/manifest-merge nếu bị lỗi.
 
 # Cách sử dụng SDK:
 
