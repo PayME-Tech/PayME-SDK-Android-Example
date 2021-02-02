@@ -134,7 +134,7 @@ Trước khi sử dụng PayME SDK cần gọi phương thức khởi tạo mộ
 ```kotlin
 import vn.payme.sdk.model.Env
 val configColor = arrayOf<String>("#75255b","#9d455f"}
-val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKey, configColor, Env.SANDBOX, false)
+val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKey, configColor, LANGUAGES.VN, Env.SANDBOX, false)
 // sau khi khởi tạo có thể gọi payme.login() tại đây
 ```
 
