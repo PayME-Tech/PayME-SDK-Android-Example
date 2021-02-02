@@ -12,9 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import org.json.JSONObject
 import vn.payme.sdk.PayME
-import vn.payme.sdk.enums.Action
-import vn.payme.sdk.enums.ERROR_CODE
-import vn.payme.sdk.enums.Env
+import vn.payme.sdk.enums.*
 import vn.payme.sdk.model.*
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -76,7 +74,6 @@ class MainActivity : AppCompatActivity() {
 
     fun openWallet() {
         payme?.openWallet(
-            Action.OPEN, null, null, null,
             onSuccess = { json: JSONObject? ->
             },
             onError = { jsonObject, code, message ->
@@ -244,10 +241,20 @@ class MainActivity : AppCompatActivity() {
                         ConnectToken,
                         PrivateKey,
                         configColor,
+                        LANGUAGES.VN,
                         env,
                         showLog
                     )
-                payme?.login(onSuccess = { jsonObject ->
+                payme?.login(onSuccess = { accountStatus ->
+                    if(accountStatus == AccountStatus.NOT_ACTIVED){
+                        //Tài khoản chưa kich hoạt
+                    }
+                    if(accountStatus == AccountStatus.NOT_KYC){
+                        //Tài khoản chưa định danh
+                    }
+                    if(accountStatus == AccountStatus.KYC_OK){
+                        //Tài khoản đã
+                    }
                     loading.visibility = View.GONE
                     paymePref.edit().putString(APP_USER_ID, inputUserId.text.toString()).commit()
                     paymePref.edit().putString(APP_PHONE, inputPhoneNumber.text.toString())
@@ -286,7 +293,6 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             if (ConnectToken.length > 0) {
                 payme?.openWallet(
-                    Action.OPEN, null, null, null,
                     onSuccess = { json: JSONObject? ->
                     },
                     onError = { jsonObject, code, message ->
@@ -345,7 +351,7 @@ class MainActivity : AppCompatActivity() {
             val amount = convertInt(moneyPay.text.toString())
             val infoPayment =
                 InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet","")
-            payme?.pay(this.supportFragmentManager, infoPayment,
+            payme?.pay(this.supportFragmentManager, infoPayment,true,
                 onSuccess = { json: JSONObject? ->
                 },
                 onError = { jsonObject, code, message ->
