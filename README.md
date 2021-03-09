@@ -451,7 +451,7 @@ payme.pay(this.supportFragmentManager, infoPayment,true,null
 | descriptio     | No           | Mô tả nếu có                                                 |
 | extraData      | Yes          | Khi thực hiện thanh toans thì app cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết. |
 | isShowResultUI | Yes          | Có muốn hiển thị kết quả giao dịch hay ko                    |
-| method         | No           | (tùy chọn có thể null) cung cấp ở hàm getListMethodPayment()  để chọn trực tiếp phương thức thanh toán mà app đối tác muốn |
+| method         | No           | (tùy chọn có thể null) cung cấp ở hàm getPaymentMethods()  để chọn trực tiếp phương thức thanh toán mà app đối tác muốn |
 
 Trong trường hợp app tích hợp cần lấy số dư để tự hiển thị lên UI trên app thì có thể dùng hàm, hàm này không hiển thị UI của PayME SDK
 
