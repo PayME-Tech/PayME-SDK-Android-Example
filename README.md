@@ -395,8 +395,8 @@ Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví Pay
 public fun pay(
             fragmentManager: FragmentManager,
             infoPayment: InfoPayment,
-  					isShowResultUI: Boolean,
-  					method: Method?,
+  	    isShowResultUI: Boolean,
+  	    method: Method?,
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int?, String) -> Unit)?,
         )
