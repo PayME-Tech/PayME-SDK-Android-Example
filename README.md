@@ -196,22 +196,7 @@ connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "090999
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
-### Các c**hức năng của PayME SDK**
-
-###
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Các c**hức năng của PayME SDK**
 ### getAccountInfo()
 
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
@@ -342,14 +327,14 @@ payme.withdraw(amount, null, "",
 
 Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.Withdraw**.
 
-### getListService()
+### getSupportedServices()
 
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
 
 
 
 ```kotlin
-public fun getListService(): ArrayList<Service> {
+public fun getSupportedServices(): ArrayList<Service> {
         return listService
 }
 
@@ -386,14 +371,14 @@ Ví dụ:
 
 
 
-### getListMethodPayment()
+### getPaymentMethods()
 
 Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách các phương thức thanh toán mà PayME cung cấp vs từng tài khoản sau khi tài khoản đã kích hoạt và định danh thành công,dùng để truyền vào hàm pay() để chọn trực tiếp phương thức thanh toán mà app đối tác muốn
 
 
 
 ```kotlin
-public fun getListMethodPayment(
+public fun getPaymentMethods(
         onSuccess: (ArrayList<Method>) -> Unit,
         onError: (JSONObject?, Int?, String) -> Unit
     )
