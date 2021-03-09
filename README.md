@@ -6,14 +6,14 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 
 **Một số thuật ngữ**
 
-|     | Name    | Giải thích                                                                                               |
-| --- | ------- | -------------------------------------------------------------------------------------------------------- |
-| 1   | app     | Là app mobile iOS/Android hoặc web sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME.       |
-| 2   | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.                                                 |
-| 3   | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ                                              |
-| 4   | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
-| 5   | RSA     | Thuật toán mã hóa dữ liệu RSA.                                                                           |
-| 6   | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME      |
+|      | Name    | Giải thích                                                   |
+| ---- | ------- | ------------------------------------------------------------ |
+| 1    | app     | Là app mobile iOS/Android hoặc web sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME. |
+| 2    | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.     |
+| 3    | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ  |
+| 4    | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
+| 5    | RSA     | Thuật toán mã hóa dữ liệu RSA.                               |
+| 6    | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME |
 
 **Bước 1 :**
 
@@ -188,17 +188,29 @@ connectToken cần để truyền gọi api từ tới PayME và sẽ được t
 connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "0909998877" }" + secretKey )
 ```
 
-| **Tham số**    | **Bắt buộc** | **Giải thích**                                                                                                                                      |
-| -------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **timestamp**  | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout cùa connectToken. Ví dụ 2021-01-20T06:53:07.621Z         |
+| **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| **timestamp**  | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout cùa connectToken. Ví dụ 2021-01-20T06:53:07.621Z |
 | **\*userId\*** | Yes          | là giá trị cố định duy nhất tương ứng với mỗi tài khoản khách hàng ở dịch vụ, thường giá trị này do server hệ thống được tích hợp cấp cho PayME SDK |
-| **\*phone\***  | No           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null                         |
+| **\*phone\***  | No           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null |
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
 ### Các c**hức năng của PayME SDK**
 
 ###
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### getAccountInfo()
 
@@ -214,21 +226,18 @@ public fun getAccountInfo(
 Ví dụ:
 
 ```kotlin
-      payme.getAccountInfo(
-          onSuccess = { accountStatus ->
-            if(accountStatus == AccountStatus.NOT_ACTIVED){
-             //Tài khoản chưa kich hoạt
-            }
-            if(accountStatus == AccountStatus.NOT_KYC){
-             //Tài khoản chưa định danh
-            }
-            if(accountStatus == AccountStatus.KYC_OK){
-             //Tài khoản đã
-            }
-          },
-           onError = { jsonObject, code, message ->
-
-          })
+      val service : Service = payme?.getListService()?.get(2)!!
+      payme?.openService(
+        service,
+        onSuccess = { json: JSONObject? ->
+        },
+        onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
+                    })
 ```
 
 **openWallet() - Mở UI chức năng PayME tổng hợp**
@@ -243,8 +252,8 @@ enum class Action {
 
 Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
 
-| **Tham số** | **Bắt buộc** | **Giải thích**                                                       |
-| :---------- | ------------ | -------------------------------------------------------------------- |
+| **Tham số** | **Bắt buộc** | **Giải thích**                                               |
+| :---------- | ------------ | ------------------------------------------------------------ |
 | onSuccess   | Yes          | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
 | onError     | Yes          | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
 
@@ -333,6 +342,66 @@ payme.withdraw(amount, null, "",
 
 Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.Withdraw**.
 
+### getListService()
+
+App có thể dùng thược tính này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
+
+
+
+```kotlin
+public fun getListService(): ArrayList<Service> {
+        return listService
+}
+
+```
+
+### openService()
+
+Hàm này được gọi khi từ app tích hợp khi muốn gọi 1dịch vụ mà  PayME cũng cấp bằng cách truyền vào tham số Service như trên
+
+```kotlin
+ public fun openService(
+        service: Service,
+        onSuccess: (JSONObject?) -> Unit,
+        onError: (JSONObject?, Int?, String) -> Unit
+    )
+
+```
+
+Ví dụ:
+
+```kotlin
+  val service : Service = payme?.getListService()?.get(2)!!
+  payme?.openService(
+    service, 
+    onSuccess = { json: JSONObject? -> },
+    onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
+   })
+```
+
+
+
+### getListMethodPayment()
+
+Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách các phương thức thanh toán mà PayME cung cấp vs từng tài khoản sau khi tài khoản đã kích hoạt và định danh thành công,dùng để truyền vào hàm pay() để chọn trực tiếp phương thức thanh toán mà app đối tác muốn
+
+
+
+```kotlin
+public fun getListMethodPayment(
+        onSuccess: (ArrayList<Method>) -> Unit,
+        onError: (JSONObject?, Int?, String) -> Unit
+    )
+
+```
+
+
+
 ### pay() - Thanh toán
 
 Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví PayME đã được kích hoạt.
@@ -342,6 +411,7 @@ public fun pay(
             fragmentManager: FragmentManager,
             infoPayment: InfoPayment,
   					isShowResultUI: Boolean,
+  					method: Method?,
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int?, String) -> Unit)?,
         )
@@ -363,6 +433,8 @@ class InfoPayment {
 - referExtraData: Thông tin bổ sung (extraData) là một nội dung được định nghĩa theo dạng chuỗi, chứa thông tin bổ sung của một giao dịch mà đối tác muốn nhận về khi hoàn tất một giao dịch với PAYME.
 nếu Merchant ko cần IPN thêm data custom của mình có thể bỏ qua
 
+-method (tùy chọn có thể null) cung cấp ở hàm getListMethodPayment()  để chọn trực tiếp phương thức thanh toán mà app đối tác muốn
+
 ```
 
 Ví dụ:
@@ -374,7 +446,7 @@ val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValue
 
 
 
-payme.pay(this.supportFragmentManager, infoPayment,true
+payme.pay(this.supportFragmentManager, infoPayment,true,null
           onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
           onError = { jsonObject, code, message ->
                     PayME.showError(message)
@@ -390,12 +462,12 @@ payme.pay(this.supportFragmentManager, infoPayment,true
             )
 ```
 
-| Tham số        | **Bắt buộc** | **Giải thích**                                                                                                                                                                                                                  |
-| -------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| amount         | Yes          | Số tiền cần thanh toán bên app truyền qua cho SDK                                                                                                                                                                               |
-| descriptio     | No           | Mô tả nếu có                                                                                                                                                                                                                    |
+| Tham số        | **Bắt buộc** | **Giải thích**                                               |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| amount         | Yes          | Số tiền cần thanh toán bên app truyền qua cho SDK            |
+| descriptio     | No           | Mô tả nếu có                                                 |
 | extraData      | Yes          | Khi thực hiện thanh toans thì app cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết. |
-| isShowResultUI | Yes          | Có muốn hiển thị kết quả giao dịch hay ko                                                                                                                                                                                       |
+| isShowResultUI | Yes          | Có muốn hiển thị kết quả giao dịch hay ko                    |
 
 Trong trường hợp app tích hợp cần lấy số dư để tự hiển thị lên UI trên app thì có thể dùng hàm, hàm này không hiển thị UI của PayME SDK
 
