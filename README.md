@@ -55,7 +55,7 @@ android {
 }
 dependencies {
 ...
-/ thư viện chính
+  // thư viện chính
   implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.3.9'
   // thư viện kèm theo
   ...
