@@ -245,7 +245,7 @@ Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năn
 **Ví dụ :**
 
 ```kotlin
-payme.openWallet(this, Action.OPEN, null, null, null,
+payme.openWallet(
 	onSuccess = { json: JSONObject ->
               },
 	onError = { jsonObject, code, message ->
@@ -267,16 +267,18 @@ payme.openWallet(this, Action.OPEN, null, null, null,
 ```kotlin
 public fun deposit(
   amount : Int,
-  description : String?,
-  extraData : String,
+  closeDepositResult: Boolean,
   onSuccess: (JSONObject) -> Unit,
   onError:(JSONObject?, Int?, String) -> Unit)
 ```
+closeDepositResult : đóng lại màn hình sdk khi có kết quả n tiền thành công hoặc thất bại
 
 Ví dụ :
 
 ```kotlin
-payme.deposit(amount, null, "",
+payme.deposit(  
+		amount,
+		false,
                 onSuccess = { json: JSONObject ->
                 },
                 onError = { jsonObject, code, message ->
@@ -302,14 +304,21 @@ Hàm này có ý nghĩa giống như khi gọi openWallet với action **Action.
 ### withdraw() - Rút tiền
 
 ```kotlin
-public fun withdraw(amount: Int, description: String?, extraData: String,
-                    onSuccess: (JSONObject) -> Unit, onError: (JSONObject?, Int?, String) -> Unit)
+public fun withdraw(
+		    amount: Int,
+		    closeWithdrawResult: Boolean,
+                    onSuccess: (JSONObject) -> Unit,
+		    onError: (JSONObject?, Int?, String) -> Unit)
 ```
+closeWithdrawResult : đóng lại màn hình sdk khi có kết quả rút tiền thành công hoặc thất bại
+		    
 
 Ví dụ:
 
 ```kotlin
-payme.withdraw(amount, null, "",
+payme.withdraw( 
+		amount,
+		false,
                 onSuccess = { json: JSONObject ->
                 },
                 onError = { jsonObject, code, message ->
