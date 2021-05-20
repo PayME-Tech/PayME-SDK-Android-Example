@@ -271,7 +271,7 @@ public fun deposit(
   onSuccess: (JSONObject) -> Unit,
   onError:(JSONObject?, Int?, String) -> Unit)
 ```
-closeDepositResult : đóng lại màn hình sdk khi có kết quả n tiền thành công hoặc thất bại
+closeDepositResult : đóng lại màn hình sdk khi có kết quả nạp tiền thành công hoặc thất bại
 
 Ví dụ :
 
