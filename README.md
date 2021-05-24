@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.5.4'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.5.5'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
