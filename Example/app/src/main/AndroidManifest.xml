@@ -26,10 +26,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".LogActivity" android:label="Log" ></activity>
         <activity
-            android:name=".SettingAcitivity"
-            android:label="Setting"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
             android:name=".MainActivity"
             android:label="Home"
            >
