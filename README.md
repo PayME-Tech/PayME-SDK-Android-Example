@@ -231,9 +231,6 @@ Ví dụ:
 ```kotlin
 public fun openWallet(onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
 
-enum class Action {
-  DEPOSIT, PAY, OPEN,
-}
 ```
 
 Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
