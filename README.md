@@ -159,14 +159,15 @@ Ví dụ:
 ```kotlin
 public fun loginExample(){
   payme.loggin(		onSuccess = { accountStatus ->
-                    if(accountStatus == AccountStatus.NOT_ACTIVED){
+                    if(accountStatus == AccountStatus.NOT_ACTIVATED){
                         //Tài khoản chưa kich hoạt
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
                     }
-                    if(accountStatus == AccountStatus.KYC_OK){
-                        //Tài khoản đã
+                    if(accountStatus == AccountStatus.APPROVE){
+                        //Tài khoản đã định danh
+                    }
                     }
                     walletView.setVisibility(View.VISIBLE)
                			},
@@ -334,7 +335,43 @@ payme.withdraw(
                 })
 ```
 
-Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.Withdraw**.
+### transfer() - Chuyển tiền
+
+```kotlin
+public fun withdraw(
+		        amount: Int,
+			description: String,
+			closeTransferResult: Boolean,
+			onSuccess: (JSONObject?) -> Unit,
+			onError: (JSONObject?, Int?, String) -> Unit
+		    )
+```
+amount: Số tiền cần chuyển
+description : Ghi chú khi chuyển tiền
+closeTransferResult : đóng lại màn hình sdk khi có kết quả chuyển tiền thành công hoặc thất bại
+		    
+
+Ví dụ:
+
+```kotlin
+payme.transfer( 
+		amount,
+		"chuyen tien cho ban nhe",
+		false,
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme.logout()
+                    }
+
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
+```
 
 ### getSupportedServices()
 
@@ -388,11 +425,13 @@ Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách c�
 
 ```kotlin
 public fun getPaymentMethods(
+	storeId:Long,
         onSuccess: (ArrayList<Method>) -> Unit,
         onError: (JSONObject?, Int?, String) -> Unit
     )
 
 ```
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
 
 
 
@@ -414,7 +453,7 @@ class InfoPayment {
     var amount : Int? = null
     var note : String? = null
     var orderId : String? = null
-    var storeId : Long? = null
+    var storeId : Long 
     var type : String? = null
     var referExtraData : String? = null
 }
