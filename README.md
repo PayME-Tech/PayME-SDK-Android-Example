@@ -385,7 +385,7 @@ public fun getSupportedServices(): ArrayList<Service> {
 
 ### openService()
 
-Hàm này được gọi khi từ app tích hợp khi muốn gọi 1dịch vụ mà  PayME cũng cấp bằng cách truyền vào tham số Service như trên
+Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ mà  PayME cũng cấp bằng cách truyền vào tham số Service như trên
 
 ```kotlin
  public fun openService(
