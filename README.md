@@ -479,13 +479,12 @@ val infoPayment = InfoPayment(
                     "OpenEWallet",
                     ""
                 )
-	payme?.pay( this.supportFragmentManager,
-		    infoPayment,
-		    true,
-		    null,
-                    onSuccess = { json: JSONObject? ->
-                    },
-                    onError = { jsonObject, code, message ->
+payme?.pay( this.supportFragmentManager,
+	    infoPayment,
+	    true,
+	    null,
+            onSuccess = { json: JSONObject? -> },
+            onError = { jsonObject, code, message ->
                         if (message != null && message.length > 0) {
                             PayME.showError(message)
                         }
@@ -497,7 +496,7 @@ val infoPayment = InfoPayment(
                             openWallet()
                         }
                     }
-                )
+            )
 
 
 ```
