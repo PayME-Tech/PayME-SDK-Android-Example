@@ -344,7 +344,9 @@ public fun withdraw(
 		    )
 ```
 amount: Số tiền cần chuyển
+
 description : Ghi chú khi chuyển tiền
+
 closeTransferResult : đóng lại màn hình sdk khi có kết quả chuyển tiền thành công hoặc thất bại
 		    
 
