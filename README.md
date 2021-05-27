@@ -333,7 +333,7 @@ payme.withdraw(
 ### transfer() - Chuyển tiền
 
 ```kotlin
-public fun withdraw(
+public fun transfer(
 		        amount: Int,
 			description: String,
 			closeTransferResult: Boolean,
