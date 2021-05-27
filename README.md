@@ -204,7 +204,7 @@ App có thể dùng thược tính này sau khi khởi tạo SDK để biết đ
 
 ```kotlin
 public fun getAccountInfo(
-        onSuccess: (AccountStatus) -> Unit,
+        onSuccess: (JSONObject?) -> Unit,
         onError: (JSONObject?, Int?, String) -> Unit
         )
 ```
