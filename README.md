@@ -200,7 +200,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 ## Các c**hức năng của PayME SDK**
 ### getAccountInfo()
 
-App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
+App có thể dùng hàm này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
 ```kotlin
 public fun getAccountInfo(
