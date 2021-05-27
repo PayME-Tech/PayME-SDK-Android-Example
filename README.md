@@ -212,9 +212,7 @@ public fun getAccountInfo(
 Ví dụ:
 
 ```kotlin
-      val service : Service = payme?.getListService()?.get(2)!!
-      payme?.openService(
-        service,
+      payme?.getAccountInfo(
         onSuccess = { json: JSONObject? ->
         },
         onError = { jsonObject, code, message ->
