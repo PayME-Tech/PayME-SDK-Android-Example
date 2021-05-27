@@ -470,24 +470,36 @@ Ví dụ:
 ```kotlin
 val amount = convertInt(moneyPay.text.toString())
 val nextValues = List(10) { Random.nextInt(0, 100000) }
-val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet,"")
-
-
-
-payme.pay(this.supportFragmentManager, infoPayment,true,null
-          onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
-          onError = { jsonObject, code, message ->
-                    PayME.showError(message)
-                    if (code == ERROR_CODE.EXPIRED) {
-                        walletView.setVisibility(View.GONE)
-                        payme.logout()
-			// Có thể thông báo lỗi cho user sau đó login lại để lấy lại token.
+val infoPayment = InfoPayment(
+                    "PAY",
+                    amount,
+                    "Nội dung đơn hàng",
+                    nextValues.toString(),
+                    storeId,
+                    "OpenEWallet",
+                    ""
+                )
+	payme?.pay( this.supportFragmentManager,
+		    infoPayment,
+		    true,
+		    null,
+                    onSuccess = { json: JSONObject? ->
+                    },
+                    onError = { jsonObject, code, message ->
+                        if (message != null && message.length > 0) {
+                            PayME.showError(message)
+                        }
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
+                        if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                            openWallet()
+                        }
                     }
-                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
-                        openWallet()
-                    }
-                }
-            )
+                )
+
+
 ```
 
 | Tham số        | **Bắt buộc** | **Giải thích**                                               |
