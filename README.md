@@ -372,7 +372,7 @@ payme.transfer(
 
 ### getSupportedServices()
 
-App có thể dùng thược tính này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
+App có thể dùng h này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
 
 
 
