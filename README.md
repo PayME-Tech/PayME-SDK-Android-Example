@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.5.6'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.5.8'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -165,7 +165,7 @@ public fun loginExample(){
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
                     }
-                    if(accountStatus == AccountStatus.APPROVE){
+                    if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã định danh
                     }
                     }
