@@ -257,6 +257,25 @@ payme.openWallet(
 		 )
 }
 ```
+### openKYC() -  Mở modal định danh tài khoản
+Hàm này được gọi khi từ app tích hợp khi muốn mở modal định danh tài khoản ( yêu cầu tài khoản phải chưa định danh )
+
+```kotlin
+public fun openKYC(
+  onSuccess: (JSONObject?) -> Unit,
+  onError:(JSONObject?, Int?, String) -> Unit)
+```
+Ví dụ :
+
+```kotlin
+payme.openKYC(  
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+		}
+	     )
+```
+
 
 ### deposit() - Nạp tiền
 
@@ -377,9 +396,9 @@ App có thể dùng h này sau khi khởi tạo SDK để biết danh sách các
 
 
 ```kotlin
-public fun getSupportedServices(): ArrayList<Service> {
-        return listService
-}
+  public fun getSupportedServices(onSuccess: (ArrayList<Service>?) -> Unit,onError: (JSONObject?, Int?, String) -> Unit)  {
+      
+    }
 
 ```
 
