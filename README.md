@@ -482,6 +482,11 @@ class InfoPayment {
 - referExtraData: Thông tin bổ sung (extraData) là một nội dung được định nghĩa theo dạng chuỗi, chứa thông tin bổ sung của một giao dịch mà đối tác muốn nhận về khi hoàn tất một giao dịch với PAYME.
 nếu Merchant ko cần IPN thêm data custom của mình có thể bỏ qua
 
+-Khi thanh toán bằng ví PayME thì yêu cầu tài khoản đã kích hoạt,định danh và số dư trong ví phải lớn hơn số tiền thanh toán
+thông tin tài khoản lấy qua hàm getAccountInfo()
+thông tin số dư lấy qua hàm getWalletInfo()
+
+
 ```
 
 Ví dụ:
