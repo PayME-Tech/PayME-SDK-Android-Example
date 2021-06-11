@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.6.9'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.7.0'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -557,7 +557,7 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, In
 ```
 ### close() - Thanh toán
 
-Hàm này được dùng để app tích hơp đóng lại ui của sdk khi đang payment hoặc oppenWallet
+Hàm này được dùng để app tích hơp đóng lại ui của sdk khi đang payment hoặc openWallet
 
 ```kotlin
  fun close(){
