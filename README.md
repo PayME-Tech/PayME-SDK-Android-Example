@@ -557,7 +557,7 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, In
 ```
 ### close() - Đóng UI
 
-Hàm này được dùng để app tích hơp đóng lại ui của sdk khi đang payment hoặc openWallet
+Hàm này được dùng để app tích hợp đóng lại UI của SDK khi đang payment hoặc openWallet
 
 ```kotlin
  fun close(){
