@@ -555,6 +555,16 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, In
   }
 }
 ```
+### close() - Thanh toán
+
+Hàm này được dùng để app tích hơp đóng lại ui của sdk khi đang payment hoặc oppenWallet
+
+```kotlin
+ fun close(){
+ }
+```
+
+
 
 **\*balance\*** : App tích hợp có thể sử dụng giá trị trong key balance để hiển thị, các field khác hiện tại chưa dùng.
 
