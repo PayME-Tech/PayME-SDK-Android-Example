@@ -197,7 +197,24 @@ connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "090999
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
+## Mã lỗi của PayME SDK
+
+| **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
+| :------------ | :----------- | :----------------------------------------------------------- |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng |
+| <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
+| <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
+| <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
+| <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
+| <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
+| <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
+| <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
+| <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
+| <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
+| <code>BALANCE_ERROR</code>   | <code>-9</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+
 ## Các c**hức năng của PayME SDK**
+
 ### getAccountInfo()
 
 App có thể dùng hàm này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
