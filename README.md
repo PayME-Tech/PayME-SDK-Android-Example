@@ -211,7 +211,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 | <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
 | <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
-| <code>BALANCE_ERROR</code>   | <code>-9</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+| <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
 
 ## Các c**hức năng của PayME SDK**
 
