@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.7.6'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.7.8'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -292,7 +292,27 @@ payme.openKYC(
 		}
 	     )
 ```
+### scanQR() - Mở chức năng quét mã QR để thanh toán
 
+```kotlin
+fun scanQR(fragmentManager: FragmentManager) : Unit 
+```
+Định dạng qr : 
+```kotlin
+ val qrString =  "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}"
+```
+
+Ví dụ  : 
+```kotlin
+val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+```
+
+- action: loại giao dịch ( 'PAYMENT' => thanh toán)
+- amount: số tiền thanh toán
+- note: Mô tả giao dịch từ phía đối tác
+- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
+- type: OPENEWALLET
 
 ### deposit() - Nạp tiền
 
