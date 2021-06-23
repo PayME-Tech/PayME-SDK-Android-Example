@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.7.8'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.7.9'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -445,6 +445,7 @@ Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ
 
 ```kotlin
  public fun openService(
+ 	fragmentManager: FragmentManager,
         service: Service,
         onSuccess: (JSONObject?) -> Unit,
         onError: (JSONObject?, Int?, String) -> Unit
@@ -457,6 +458,7 @@ Ví dụ:
 ```kotlin
   val service : Service = payme?.getListService()?.get(2)!!
   payme?.openService(
+    this.supportFragmentManager,
     service, 
     onSuccess = { json: JSONObject? -> },
     onError = { jsonObject, code, message ->
@@ -497,7 +499,7 @@ public fun pay(
             fragmentManager: FragmentManager,
             infoPayment: InfoPayment,
   	    isShowResultUI: Boolean,
-  	    method: Method?,
+  	    methodId: Number?,
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int?, String) -> Unit)?,
         )
@@ -510,6 +512,7 @@ class InfoPayment {
     var type : String? = null
     var referExtraData : String? = null
 }
+- methodId: Id của phương thức
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
 - amount: số tiền thanh toán
 - note: Mô tả giao dịch từ phía đối tác
