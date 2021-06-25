@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.8.1'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.8.2'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -150,7 +150,7 @@ Sau khi gọi login() thành công rồi thì mới gọi các chức năng khá
 ```kotlin
 public fun login(
   onSuccess:(AccountStatus)->Unit,
-  onError: (JSONObject?, Int?, String) -> Unit
+  onError: (JSONObject?, Int, String?) -> Unit
 }
 ```
 
@@ -222,7 +222,7 @@ App có thể dùng hàm này sau khi khởi tạo SDK để biết được tr�
 ```kotlin
 public fun getAccountInfo(
         onSuccess: (JSONObject?) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onError: (JSONObject?, Int, String?) -> Unit
         )
 ```
 
@@ -295,7 +295,11 @@ payme.openKYC(
 ### scanQR() - Mở chức năng quét mã QR để thanh toán
 
 ```kotlin
-fun scanQR(fragmentManager: FragmentManager) : Unit 
+fun scanQR(
+	fragmentManager: FragmentManager,
+	onSuccess: (JSONObject?) -> Unit,
+	onError: (JSONObject?, Int, String?) -> Unit
+) : Unit 
 ```
 Định dạng qr : 
 ```kotlin
@@ -313,6 +317,19 @@ val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
 - orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
 - storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
 - type: OPENEWALLET
+- 
+### payQRCode() - thanh toán mã QR code
+```kotlin
+    fun payQRCode(
+    fragmentManager: FragmentManager, 
+    qr: String,
+    isShowResultUI:Boolean,
+    onSuccess: (JSONObject?) -> Unit,
+    onError:(JSONObject?, Int, String?) -> Unit)
+```
+
+- qr: Mã QR để thanh toán  ( Định dạng QR như hàm scanQR() )
+- isShowResultUI: Có muốn hiển thị kết quả giao dịch hay ko  
 
 ### deposit() - Nạp tiền
 
@@ -321,7 +338,7 @@ public fun deposit(
   amount : Int,
   closeDepositResult: Boolean,
   onSuccess: (JSONObject) -> Unit,
-  onError:(JSONObject?, Int?, String) -> Unit)
+  onError:(JSONObject?, Int, String?) -> Unit)
 ```
 closeDepositResult : đóng lại màn hình sdk khi có kết quả nạp tiền thành công hoặc thất bại
 
@@ -360,7 +377,7 @@ public fun withdraw(
 		    amount: Int,
 		    closeWithdrawResult: Boolean,
                     onSuccess: (JSONObject) -> Unit,
-		    onError: (JSONObject?, Int?, String) -> Unit)
+		    onError: (JSONObject?, Int, String?) -> Unit)
 ```
 closeWithdrawResult : đóng lại màn hình sdk khi có kết quả rút tiền thành công hoặc thất bại
 		    
@@ -394,7 +411,7 @@ public fun transfer(
 			description: String,
 			closeTransferResult: Boolean,
 			onSuccess: (JSONObject?) -> Unit,
-			onError: (JSONObject?, Int?, String) -> Unit
+			onError: (JSONObject?, Int, String?) -> Unit
 		    )
 ```
 amount: Số tiền cần chuyển
@@ -448,7 +465,7 @@ Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ
  	fragmentManager: FragmentManager,
         service: Service,
         onSuccess: (JSONObject?) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onError: (JSONObject?, Int, String?) -> Unit
     )
 
 ```
@@ -482,7 +499,7 @@ Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách c�
 public fun getPaymentMethods(
 	storeId:Long,
         onSuccess: (ArrayList<Method>) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onError: (JSONObject?, Int, String?) -> Unit
     )
 
 ```
@@ -501,7 +518,7 @@ public fun pay(
   	    isShowResultUI: Boolean,
   	    methodId: Number?,
             onSuccess: ((JSONObject?) -> Unit)?,
-            onError: ((JSONObject?, Int?, String) -> Unit)?,
+            onError: ((JSONObject?, Int, String?) -> Unit)?,
         )
 class InfoPayment {
     var action : String? = null
