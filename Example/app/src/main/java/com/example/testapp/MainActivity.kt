@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     fun openWallet() {
         payme?.openWallet(
+            this.supportFragmentManager,
             onSuccess = { json: JSONObject? ->
             },
             onError = { jsonObject, code, message ->
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             textView.text = "${decimal.format(balance)}đ"
         }, onError = { jsonObject, code, message ->
             PayME.showError(message)
-            if (code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+            if (code == ERROR_CODE.ACCOUNT_NOT_ACTIVATED) {
                 openWallet()
             }
         })
@@ -192,13 +193,13 @@ class MainActivity : AppCompatActivity() {
                         showLog
                     )
                 payme?.login(onSuccess = { accountStatus ->
-                    if(accountStatus == AccountStatus.NOT_ACTIVED){
+                    if(accountStatus == AccountStatus.NOT_ACTIVATED){
                         //Tài khoản chưa kich hoạt
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
                     }
-                    if(accountStatus == AccountStatus.KYC_OK){
+                    if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã
                     }
                     loading.visibility = View.GONE
@@ -236,6 +237,7 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             if (ConnectToken.length > 0) {
                 payme?.openWallet(
+                    supportFragmentManager,
                     onSuccess = { json: JSONObject? ->
                     },
                     onError = { jsonObject, code, message ->
@@ -254,7 +256,7 @@ class MainActivity : AppCompatActivity() {
 
 
             val amount = convertInt(moneyDeposit.text.toString())
-            payme?.deposit(amount, false,
+            payme?.deposit(supportFragmentManager,amount, false,
                 onSuccess = { json: JSONObject? ->
                 },
                 onError = { jsonObject, code, message ->
@@ -263,7 +265,7 @@ class MainActivity : AppCompatActivity() {
                         walletView.setVisibility(View.GONE)
                         payme?.logout()
                     }
-                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVATED) {
                         openWallet()
                     }
                 })
@@ -274,7 +276,7 @@ class MainActivity : AppCompatActivity() {
 
             val amount = convertInt(moneyWithdraw.text.toString())
 
-            payme?.withdraw(amount, false,
+            payme?.withdraw(supportFragmentManager,amount, false,
                 onSuccess = { json: JSONObject? ->
                 },
                 onError = { jsonObject, code, message ->
@@ -283,12 +285,13 @@ class MainActivity : AppCompatActivity() {
                         walletView.setVisibility(View.GONE)
                         payme?.logout()
                     }
-                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVATED) {
                         openWallet()
                     }
                 })
         }
         buttonPay.setOnClickListener {
+//            payme?.setLanguage(context,LANGUAGES.EN)
             val nextValues = List(10) { Random.nextInt(0, 100000) }
 
             val amount = convertInt(moneyPay.text.toString())
@@ -305,7 +308,7 @@ class MainActivity : AppCompatActivity() {
                         walletView.setVisibility(View.GONE)
                         payme?.logout()
                     }
-                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVATED) {
                         openWallet()
                     }
                 }
