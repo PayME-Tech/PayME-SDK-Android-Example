@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.5.6'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.0'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -150,7 +150,7 @@ Sau khi gọi login() thành công rồi thì mới gọi các chức năng khá
 ```kotlin
 public fun login(
   onSuccess:(AccountStatus)->Unit,
-  onError: (JSONObject?, Int?, String) -> Unit
+  onError: (JSONObject?, Int, String?) -> Unit
 }
 ```
 
@@ -159,14 +159,15 @@ Ví dụ:
 ```kotlin
 public fun loginExample(){
   payme.loggin(		onSuccess = { accountStatus ->
-                    if(accountStatus == AccountStatus.NOT_ACTIVED){
+                    if(accountStatus == AccountStatus.NOT_ACTIVATED){
                         //Tài khoản chưa kich hoạt
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
                     }
-                    if(accountStatus == AccountStatus.KYC_OK){
-                        //Tài khoản đã
+                    if(accountStatus == AccountStatus.KYC_APPROVED){
+                        //Tài khoản đã định danh
+                    }
                     }
                     walletView.setVisibility(View.VISIBLE)
                			},
@@ -196,24 +197,39 @@ connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "090999
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
+## Mã lỗi của PayME SDK
+
+| **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
+| :------------ | :----------- | :----------------------------------------------------------- |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng |
+| <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
+| <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
+| <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
+| <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
+| <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
+| <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
+| <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
+| <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
+| <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
+| <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+
 ## Các c**hức năng của PayME SDK**
+
 ### getAccountInfo()
 
-App có thể dùng thược tính này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
+App có thể dùng hàm này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
 
 ```kotlin
 public fun getAccountInfo(
-        onSuccess: (AccountStatus) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onSuccess: (JSONObject?) -> Unit,
+        onError: (JSONObject?, Int, String?) -> Unit
         )
 ```
 
 Ví dụ:
 
 ```kotlin
-      val service : Service = payme?.getListService()?.get(2)!!
-      payme?.openService(
-        service,
+      payme?.getAccountInfo(
         onSuccess = { json: JSONObject? ->
         },
         onError = { jsonObject, code, message ->
@@ -230,9 +246,6 @@ Ví dụ:
 ```kotlin
 public fun openWallet(onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
 
-enum class Action {
-  DEPOSIT, PAY, OPEN,
-}
 ```
 
 Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
@@ -261,6 +274,62 @@ payme.openWallet(
 		 )
 }
 ```
+### openKYC() -  Mở modal định danh tài khoản
+Hàm này được gọi khi từ app tích hợp khi muốn mở modal định danh tài khoản ( yêu cầu tài khoản phải chưa định danh )
+
+```kotlin
+public fun openKYC(
+  onSuccess: (JSONObject?) -> Unit,
+  onError:(JSONObject?, Int?, String) -> Unit)
+```
+Ví dụ :
+
+```kotlin
+payme.openKYC(  
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+		}
+	     )
+```
+### scanQR() - Mở chức năng quét mã QR để thanh toán
+
+```kotlin
+fun scanQR(
+	fragmentManager: FragmentManager,
+	onSuccess: (JSONObject?) -> Unit,
+	onError: (JSONObject?, Int, String?) -> Unit
+) : Unit 
+```
+Định dạng qr : 
+```kotlin
+ val qrString =  "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}"
+```
+
+Ví dụ  : 
+```kotlin
+val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+```
+
+- action: loại giao dịch ( 'PAYMENT' => thanh toán)
+- amount: số tiền thanh toán
+- note: Mô tả giao dịch từ phía đối tác
+- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
+- type: OPENEWALLET
+- 
+### payQRCode() - thanh toán mã QR code
+```kotlin
+    fun payQRCode(
+    fragmentManager: FragmentManager, 
+    qr: String,
+    isShowResultUI:Boolean,
+    onSuccess: (JSONObject?) -> Unit,
+    onError:(JSONObject?, Int, String?) -> Unit)
+```
+
+- qr: Mã QR để thanh toán  ( Định dạng QR như hàm scanQR() )
+- isShowResultUI: Có muốn hiển thị kết quả giao dịch hay ko  
 
 ### deposit() - Nạp tiền
 
@@ -269,7 +338,7 @@ public fun deposit(
   amount : Int,
   closeDepositResult: Boolean,
   onSuccess: (JSONObject) -> Unit,
-  onError:(JSONObject?, Int?, String) -> Unit)
+  onError:(JSONObject?, Int, String?) -> Unit)
 ```
 closeDepositResult : đóng lại màn hình sdk khi có kết quả nạp tiền thành công hoặc thất bại
 
@@ -308,7 +377,7 @@ public fun withdraw(
 		    amount: Int,
 		    closeWithdrawResult: Boolean,
                     onSuccess: (JSONObject) -> Unit,
-		    onError: (JSONObject?, Int?, String) -> Unit)
+		    onError: (JSONObject?, Int, String?) -> Unit)
 ```
 closeWithdrawResult : đóng lại màn hình sdk khi có kết quả rút tiền thành công hoặc thất bại
 		    
@@ -334,30 +403,77 @@ payme.withdraw(
                 })
 ```
 
-Hàm này có ý nghĩa giống như gọi openWallet với action là **Action.Withdraw**.
+### transfer() - Chuyển tiền
+
+```kotlin
+public fun transfer(
+		        amount: Int,
+			description: String,
+			closeTransferResult: Boolean,
+			onSuccess: (JSONObject?) -> Unit,
+			onError: (JSONObject?, Int, String?) -> Unit
+		    )
+```
+amount: Số tiền cần chuyển
+
+description : Ghi chú khi chuyển tiền
+
+closeTransferResult : đóng lại màn hình sdk khi có kết quả chuyển tiền thành công hoặc thất bại
+		    
+
+Ví dụ:
+
+```kotlin
+payme.transfer( 
+		amount,
+		"chuyen tien cho ban nhe",
+		false,
+                onSuccess = { json: JSONObject ->
+                },
+                onError = { jsonObject, code, message ->
+                    PayME.showError(message)
+                    if (code == ERROR_CODE.EXPIRED) {
+                        walletView.setVisibility(View.GONE)
+                        payme.logout()
+                    }
+
+                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                        openWallet()
+                    }
+                })
+```
 
 ### getSupportedServices()
 
-App có thể dùng thược tính này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
+App có thể dùng h này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
 
 
 
 ```kotlin
-public fun getSupportedServices(): ArrayList<Service> {
-        return listService
-}
+  public fun getSupportedServices(onSuccess: (ArrayList<Service>?) -> Unit,onError: (JSONObject?, Int?, String) -> Unit)  {
+      
+    }
 
 ```
+### setLanguage()
+Chuyển đổi ngôn ngữ của sdk
+```kotlin
+    fun setLanguage(context: Context,language: LANGUAGES){
+    }
+```
+
+
 
 ### openService()
 
-Hàm này được gọi khi từ app tích hợp khi muốn gọi 1dịch vụ mà  PayME cũng cấp bằng cách truyền vào tham số Service như trên
+Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ mà  PayME cũng cấp bằng cách truyền vào tham số Service như trên
 
 ```kotlin
  public fun openService(
+ 	fragmentManager: FragmentManager,
         service: Service,
         onSuccess: (JSONObject?) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onError: (JSONObject?, Int, String?) -> Unit
     )
 
 ```
@@ -367,6 +483,7 @@ Ví dụ:
 ```kotlin
   val service : Service = payme?.getListService()?.get(2)!!
   payme?.openService(
+    this.supportFragmentManager,
     service, 
     onSuccess = { json: JSONObject? -> },
     onError = { jsonObject, code, message ->
@@ -388,11 +505,13 @@ Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách c�
 
 ```kotlin
 public fun getPaymentMethods(
+	storeId:Long,
         onSuccess: (ArrayList<Method>) -> Unit,
-        onError: (JSONObject?, Int?, String) -> Unit
+        onError: (JSONObject?, Int, String?) -> Unit
     )
 
 ```
+- storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
 
 
 
@@ -405,19 +524,20 @@ public fun pay(
             fragmentManager: FragmentManager,
             infoPayment: InfoPayment,
   	    isShowResultUI: Boolean,
-  	    method: Method?,
+  	    methodId: Number?,
             onSuccess: ((JSONObject?) -> Unit)?,
-            onError: ((JSONObject?, Int?, String) -> Unit)?,
+            onError: ((JSONObject?, Int, String?) -> Unit)?,
         )
 class InfoPayment {
     var action : String? = null
     var amount : Int? = null
     var note : String? = null
     var orderId : String? = null
-    var storeId : Long? = null
+    var storeId : Long 
     var type : String? = null
     var referExtraData : String? = null
 }
+- methodId: Id của phương thức
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
 - amount: số tiền thanh toán
 - note: Mô tả giao dịch từ phía đối tác
@@ -427,6 +547,11 @@ class InfoPayment {
 - referExtraData: Thông tin bổ sung (extraData) là một nội dung được định nghĩa theo dạng chuỗi, chứa thông tin bổ sung của một giao dịch mà đối tác muốn nhận về khi hoàn tất một giao dịch với PAYME.
 nếu Merchant ko cần IPN thêm data custom của mình có thể bỏ qua
 
+-Khi thanh toán bằng ví PayME thì yêu cầu tài khoản đã kích hoạt,định danh và số dư trong ví phải lớn hơn số tiền thanh toán
+thông tin tài khoản lấy qua hàm getAccountInfo()
+thông tin số dư lấy qua hàm getWalletInfo()
+
+
 ```
 
 Ví dụ:
@@ -434,24 +559,35 @@ Ví dụ:
 ```kotlin
 val amount = convertInt(moneyPay.text.toString())
 val nextValues = List(10) { Random.nextInt(0, 100000) }
-val infoPayment = InfoPayment("PAY", amount, "Nội dung đơn hàng", nextValues.toString(), 4, "OpenEWallet,"")
-
-
-
-payme.pay(this.supportFragmentManager, infoPayment,true,null
-          onSuccess = { json: JSONObject -> /* Thành công, thông báo kết quả */},
-          onError = { jsonObject, code, message ->
-                    PayME.showError(message)
-                    if (code == ERROR_CODE.EXPIRED) {
-                        walletView.setVisibility(View.GONE)
-                        payme.logout()
-			// Có thể thông báo lỗi cho user sau đó login lại để lấy lại token.
+val infoPayment = InfoPayment(
+                    "PAY",
+                    amount,
+                    "Nội dung đơn hàng",
+                    nextValues.toString(),
+                    storeId,
+                    "OpenEWallet",
+                    ""
+                )
+payme?.pay( this.supportFragmentManager,
+	    infoPayment,
+	    true,
+	    null,
+            onSuccess = { json: JSONObject? -> },
+            onError = { jsonObject, code, message ->
+                        if (message != null && message.length > 0) {
+                            PayME.showError(message)
+                        }
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
+                        if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
+                            openWallet()
+                        }
                     }
-                    if (code == ERROR_CODE.ACCOUNT_NOT_KYC || code == ERROR_CODE.ACCOUNT_NOT_ACTIVETES) {
-                        openWallet()
-                    }
-                }
             )
+
+
 ```
 
 | Tham số        | **Bắt buộc** | **Giải thích**                                               |
@@ -484,6 +620,16 @@ public fun geWalletInfo(onSuccess: (JSONObject) -> Unit,onError:(JSONObject?, In
   }
 }
 ```
+### close() - Đóng UI
+
+Hàm này được dùng để app tích hợp đóng lại UI của SDK khi đang payment hoặc openWallet
+
+```kotlin
+ fun close(){
+ }
+```
+
+
 
 **\*balance\*** : App tích hợp có thể sử dụng giá trị trong key balance để hiển thị, các field khác hiện tại chưa dùng.
 
