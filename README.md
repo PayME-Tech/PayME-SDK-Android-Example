@@ -56,7 +56,7 @@ android {
 dependencies {
 ...
   // thư viện chính
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.8.8'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.8.9'
   // thư viện kèm theo
   ...
   implementation 'com.android.volley:volley:1.1.1'
@@ -455,6 +455,14 @@ App có thể dùng h này sau khi khởi tạo SDK để biết danh sách các
     }
 
 ```
+### setLanguage()
+Chuyển đổi ngôn ngữ của sdk
+```kotlin
+    fun setLanguage(context: Context,language: LANGUAGES){
+    }
+```
+
+
 
 ### openService()
 
