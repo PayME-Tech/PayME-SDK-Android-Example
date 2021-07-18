@@ -8,7 +8,7 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 
 |      | Name    | Giải thích                                                   |
 | ---- | ------- | ------------------------------------------------------------ |
-| 1    | app     | Là app mobile iOS/Android hoặc web sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME. |
+| 1    | MC app  | Là appp của merchant sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME. |
 | 2    | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.     |
 | 3    | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ  |
 | 4    | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
@@ -89,7 +89,7 @@ Tham khảo https://developer.android.com/studio/build/manifest-merge nếu bị
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
 
 - **PublicKey** : Dùng để mã hóa dữ liệu, app tích hợp cần truyền cho SDK để mã hóa.
-- **AppToken** : AppId cấp riêng định danh cho mỗi app, cần truyền cho SDK để mã hóa
+- **AppToken** : AppId cấp riêng định danh cho mỗi MC app, cần truyền cho SDK để mã hóa
 - **SecretKey** : Dùng đã mã hóa và xác thực dữ liệu ở hệ thống backend cho app tích hợp.
 
 Bên App sẽ cung cấp cho hệ thống PayME các thông tin sau:
@@ -115,7 +115,7 @@ val payme: PayME = PayME(context, AppToken, PublicKey,ConnectToken, AppPrivateKe
 Có 2 trường hợp
 
 - Dùng để login lần đầu tiên ngay sau khi khởi tạo PayME.
-- Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED, lúc này app cần gọi login lại để lấy accessToken dùng cho các chức năng khác.
+- Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED, lúc này MC app cần gọi login lại để lấy accessToken sau đó thao tác gọi lại các chức năng như cũ tùy vào flow của MC app.
 
 Sau khi gọi login() thành công rồi thì mới gọi các chức năng khác của SDK ( openWallet, pay ... )
 
@@ -173,7 +173,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 
 | **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
 | :------------ | :----------- | :----------------------------------------------------------- |
-| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản gọi lại hàm login() để tiếp tục thao tác |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản. App gọi lại hàm login() để tiếp tục thao tác |
 | <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
 | <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
 | <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
