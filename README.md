@@ -173,7 +173,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 
 | **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
 | :------------ | :----------- | :----------------------------------------------------------- |
-| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản gọi lại hàm login để tiếp tục thao tác |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản gọi lại hàm login() để tiếp tục thao tác |
 | <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
 | <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
 | <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
