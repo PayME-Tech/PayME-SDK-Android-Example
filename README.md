@@ -1,8 +1,8 @@
-PayME SDK là bộ thư viện để các app có thể tương tác với PayME Platform. PayME SDK bao gồm các chức năng chính như sau:
+PayME Android SDK là bộ thư viện để tích hợp Ví điện tử PayME một cách dễ dàng nhất vô ứng dụng của bạn. PayME Android SDK bao gồm các chức năng chính như sau:
 
 - Hệ thống đăng nhập, eKYC thông qua tài khoản ví PayME
-- Hỗ trợ app lấy thông tin số dư ví PayME
-- Chức năng nạp rút từ ví PayME.
+- Chức năng nạp,rút và thanh toàn được cung cấp bởi PayME.
+- Các dịch vụ được cung cấp sẳn của PayME.
 
 **Một số thuật ngữ**
 
@@ -15,11 +15,15 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 | 5    | RSA     | Thuật toán mã hóa dữ liệu RSA.                               |
 | 6    | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME |
 
-**Bước 1 :**
+**PayME Android Sample App**
 
-Tích hợp thư viện hỗ trợ. Dung lượng 472.76 KB
+Bạn có thể tham khảo [Android Sample App](https://github.com/PayME-Tech/PayME-SDK-Android-Example) để biết cách tích hợp SDK vào ứng dụng của bạn.
 
-**File build.gradle Project**
+**Các bước tích hợp:**
+
+***Bước 1 :***
+
+**Update file build.gradle project **
 
 ```kotlin
 allprojects {
@@ -36,7 +40,7 @@ allprojects {
 }
 ```
 
-- **File build.gradle Module**
+- **Update file build.gradle module **
 
 ```java
 android {
@@ -82,7 +86,7 @@ Update như sau:
 
 ```
 
-Tham khảo https://developer.android.com/studio/build/manifest-merge nếu bị lỗi.
+Tham khảo https://developer.android.com/studio/build/manifest-merge nếu xung đột.
 
 # Cách sử dụng SDK:
 
