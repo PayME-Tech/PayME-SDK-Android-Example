@@ -56,7 +56,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
 
-    implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.11'
+    implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.12'
 
     // thư viện kèm theo
 
