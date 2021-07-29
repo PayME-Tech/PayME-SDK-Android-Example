@@ -59,7 +59,7 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.13'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.14'
 ...
 }
 ```
