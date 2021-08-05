@@ -180,7 +180,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 | <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản. App gọi lại hàm login() để tiếp tục thao tác |
 | <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
 | <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
-| <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
+| <code>LIMIT</code>   | <code>-3</code>           | Số tiền thanh toán vượt quá hoặc nhỏ hơn hạn mức giao dịch |
 | <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
 | <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
 | <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
