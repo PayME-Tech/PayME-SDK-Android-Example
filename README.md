@@ -184,6 +184,7 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 | <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
 | <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
 | <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
+| <code>PAYMENT_PENDING</code>   | <code>-11</code>          | Thanh toán đang chờ xử lý |
 | <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
 | <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
