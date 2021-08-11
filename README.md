@@ -64,30 +64,6 @@ dependencies {
 }
 ```
 
-- **Android Manifests**
-
-Update như sau:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.example.app"
-        xmlns:tools="http://schemas.android.com/tools">
-<uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
-
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
-<application android:requestLegacyExternalStorage="true" >
-
-```
-
-Tham khảo https://developer.android.com/studio/build/manifest-merge nếu xung đột.
-
 # Cách sử dụng SDK:
 
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
