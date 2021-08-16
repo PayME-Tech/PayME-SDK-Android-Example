@@ -59,7 +59,7 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.19'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.20'
 ...
 }
 ```
@@ -112,17 +112,22 @@ Ví dụ:
 public fun loginExample(){
   payme.loggin(		onSuccess = { accountStatus ->
                     if(accountStatus == AccountStatus.NOT_ACTIVATED){
-                        //Tài khoản chưa kich hoạt
+                        //Tài khoản chưa kích hoạt
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
                     }
+		      if (accountStatus == AccountStatus.KYC_REVIEW) {
+                        //Tài khoản đã gửi thông tin định danh ,đang chờ duyệt
+                    }
+                    if (accountStatus == AccountStatus.KYC_REJECTED) {
+                        //Yêu cầu định danh bị từ
+                    }
                     if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã định danh
-                    }
-                    }
                     walletView.setVisibility(View.VISIBLE)
-               			},
+		    
+               	    },
                     onError = { jsonObject, code, message ->
                         PayME.showError(message)
                     })
