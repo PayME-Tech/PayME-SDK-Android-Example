@@ -121,7 +121,7 @@ public fun loginExample(){
                         //Tài khoản đã gửi thông tin định danh ,đang chờ duyệt
                     }
                     if (accountStatus == AccountStatus.KYC_REJECTED) {
-                        //Yêu cầu định danh bị từ
+                        //Yêu cầu định danh bị từ chối
                     }
                     if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã định danh
