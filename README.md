@@ -59,7 +59,7 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.22'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.23'
 ...
 }
 ```
@@ -170,6 +170,8 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 | <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
 | <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+| <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Tài khoản bị khoá hoặc không truyền số phone |
+
 
 ## Các c**hức năng của PayME SDK**
 
