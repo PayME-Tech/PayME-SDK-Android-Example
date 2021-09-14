@@ -110,7 +110,7 @@ Ví dụ:
 
 ```kotlin
 public fun loginExample(){
-  payme.loggin(		onSuccess = { accountStatus ->
+  payme.login(		onSuccess = { accountStatus ->
                     if(accountStatus == AccountStatus.NOT_ACTIVATED){
                         //Tài khoản chưa kích hoạt
                     }
