@@ -113,15 +113,20 @@ public fun loginExample(){
   payme.login(		onSuccess = { accountStatus ->
                     if(accountStatus == AccountStatus.NOT_ACTIVATED){
                         //Tài khoản chưa kích hoạt
+			// gọi fun openWallet() để kích hoạt tài khoản
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
+			// gọi fun openKYC() để định danh tài khoản
+
                     }
 		      if (accountStatus == AccountStatus.KYC_REVIEW) {
                         //Tài khoản đã gửi thông tin định danh ,đang chờ duyệt
                     }
                     if (accountStatus == AccountStatus.KYC_REJECTED) {
                         //Yêu cầu định danh bị từ chối
+			// gọi fun openKYC() để định danh tài khoản
+
                     }
                     if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã định danh
