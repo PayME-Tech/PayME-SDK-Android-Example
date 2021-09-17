@@ -69,7 +69,7 @@ dependencies {
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
 
 - **PublicKey** : Dùng để mã hóa dữ liệu, app tích hợp cần truyền cho SDK để mã hóa.
-- **AppToken** : AppId cấp riêng định danh cho mỗi MC app, cần truyền cho SDK để mã hóa
+- **AppToken** : AppToken cấp riêng định danh cho mỗi MC app, cần truyền cho SDK để mã hóa
 - **SecretKey** : Dùng đã mã hóa và xác thực dữ liệu ở hệ thống backend cho app tích hợp.
 
 Bên App sẽ cung cấp cho hệ thống PayME các thông tin sau:
