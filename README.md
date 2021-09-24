@@ -70,7 +70,7 @@ vs host là packageName của app tích hợp scheme ="paymesdk"
 Ví Dụ  : vn.payme.sdk.example
 
 
-```
+```kotlin
  <activity
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
