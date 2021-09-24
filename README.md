@@ -59,7 +59,7 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.23'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.24'
 ...
 }
 ```
@@ -70,7 +70,7 @@ vs host là packageName của app tích hợp scheme ="paymesdk"
 Ví Dụ  : vn.payme.sdk.example
 
 
-```kotlin
+```xml
  <activity
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
