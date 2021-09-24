@@ -64,6 +64,45 @@ dependencies {
 }
 ```
 
+- **Update file Android Manifest **
+Nếu App Tích hợp có sử dụng payCode = VNPAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán
+vs host là packageName của app tích hợp scheme ="paymesdk"
+Ví Dụ  : vn.payme.sdk.example
+
+
+```kotlin
+ <activity
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+            android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true"  >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+		    android:scheme="paymesdk"
+                    android:host="vn.payme.sdk.example"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
+        </activity>
+```
+Trong Activity nhận kết quả thanh toán : 
+```kotlin
+  override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        PayME.onNewIntent(intent)
+
+    }
+```
+
+
+
+
 # Cách sử dụng SDK:
 
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
@@ -239,6 +278,24 @@ payme.openWallet(
 		 )
 }
 ```
+**openHistory() - Mở Danh sách lịch sử giao dịch của tài khoản **
+Yêu cầu tài khoản đã kích hoạt và định danh để sử 
+```kotlin
+public fun openKYC(
+fragmentManager: FragmentManager,
+        onSuccess: (JSONObject?) -> Unit,
+        onError: (JSONObject?, Int, String?) -> Unit
+```
+Ví dụ :
+
+```kotlin
+ payme?.openHistory(supportFragmentManager,onSuccess = {
+
+            },onError = {jsonObject, i, s ->
+                PayME.showError(s)
+            })
+```
+
 ### openKYC() -  Mở modal định danh tài khoản
 Hàm này được gọi khi từ app tích hợp khi muốn mở modal định danh tài khoản ( yêu cầu tài khoản phải chưa định danh )
 
