@@ -1,8 +1,8 @@
-PayME SDK là bộ thư viện để các app có thể tương tác với PayME Platform. PayME SDK bao gồm các chức năng chính như sau:
+PayME Android SDK là bộ thư viện để tích hợp Ví điện tử PayME một cách dễ dàng nhất vô ứng dụng của bạn. PayME Android SDK bao gồm các chức năng chính như sau:
 
 - Hệ thống đăng nhập, eKYC thông qua tài khoản ví PayME
-- Hỗ trợ app lấy thông tin số dư ví PayME
-- Chức năng nạp rút từ ví PayME.
+- Chức năng nạp,rút và thanh toàn được cung cấp bởi PayME.
+- Các dịch vụ được cung cấp sẳn của PayME.
 
 **Một số thuật ngữ**
 
@@ -15,11 +15,15 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 | 5    | RSA     | Thuật toán mã hóa dữ liệu RSA.                               |
 | 6    | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME |
 
-**Bước 1 :**
+**PayME Android Sample App**
 
-Tích hợp thư viện hỗ trợ. Dung lượng 472.76 KB
+Bạn có thể tham khảo [Android Sample App](https://github.com/PayME-Tech/PayME-SDK-Android-Example) để biết cách tích hợp SDK vào ứng dụng của bạn.
 
-**File build.gradle Project**
+**Các bước tích hợp:**
+
+***Bước 1 :***
+
+**Update file build.gradle project **
 
 ```kotlin
 allprojects {
@@ -36,7 +40,7 @@ allprojects {
 }
 ```
 
-- **File build.gradle Module**
+- **Update file build.gradle module **
 
 ```java
 android {
@@ -55,41 +59,56 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.9'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.25'
 ...
 }
 ```
 
-- **Android Manifests**
+- **Update file Android Manifest **
+Nếu App Tích hợp có sử dụng payCode = VNPAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán
+vs host là packageName của app tích hợp scheme ="paymesdk"
+Ví Dụ  : vn.payme.sdk.example
 
-Update như sau:
 
 ```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.example.app"
-        xmlns:tools="http://schemas.android.com/tools">
-<uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+ <activity
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+            android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true"  >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+		    android:scheme="paymesdk"
+                    android:host="vn.payme.sdk.example"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
+        </activity>
+```
+Trong Activity nhận kết quả thanh toán : 
+```kotlin
+  override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        PayME.onNewIntent(intent)
 
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
-<application android:requestLegacyExternalStorage="true" >
-
+    }
 ```
 
-Tham khảo https://developer.android.com/studio/build/manifest-merge nếu bị lỗi.
+
+
 
 # Cách sử dụng SDK:
 
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
 
 - **PublicKey** : Dùng để mã hóa dữ liệu, app tích hợp cần truyền cho SDK để mã hóa.
-- **AppToken** : AppId cấp riêng định danh cho mỗi MC app, cần truyền cho SDK để mã hóa
+- **AppToken** : AppToken cấp riêng định danh cho mỗi MC app, cần truyền cho SDK để mã hóa
 - **SecretKey** : Dùng đã mã hóa và xác thực dữ liệu ở hệ thống backend cho app tích hợp.
 
 Bên App sẽ cung cấp cho hệ thống PayME các thông tin sau:
@@ -130,19 +149,29 @@ Ví dụ:
 
 ```kotlin
 public fun loginExample(){
-  payme.loggin(		onSuccess = { accountStatus ->
+  payme.login(		onSuccess = { accountStatus ->
                     if(accountStatus == AccountStatus.NOT_ACTIVATED){
-                        //Tài khoản chưa kich hoạt
+                        //Tài khoản chưa kích hoạt
+			// gọi fun openWallet() để kích hoạt tài khoản
                     }
                     if(accountStatus == AccountStatus.NOT_KYC){
                         //Tài khoản chưa định danh
+			// gọi fun openKYC() để định danh tài khoản
+
+                    }
+		      if (accountStatus == AccountStatus.KYC_REVIEW) {
+                        //Tài khoản đã gửi thông tin định danh ,đang chờ duyệt
+                    }
+                    if (accountStatus == AccountStatus.KYC_REJECTED) {
+                        //Yêu cầu định danh bị từ chối
+			// gọi fun openKYC() để định danh tài khoản
+
                     }
                     if(accountStatus == AccountStatus.KYC_APPROVED){
                         //Tài khoản đã định danh
-                    }
-                    }
                     walletView.setVisibility(View.VISIBLE)
-               			},
+		    
+               	    },
                     onError = { jsonObject, code, message ->
                         PayME.showError(message)
                     })
@@ -158,14 +187,14 @@ Cách tạo **connectToken**:
 connectToken cần để truyền gọi api từ tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
 
 ```kotlin
-connectToken = AES256("{ timestamp: 34343242342, userId : "ABC", phone : "0909998877" }" + secretKey )
+connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" + secretKey )
 ```
 
 | **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
 | -------------- | ------------ | ------------------------------------------------------------ |
 | **timestamp**  | Yes          | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout cùa connectToken. Ví dụ 2021-01-20T06:53:07.621Z |
 | **\*userId\*** | Yes          | là giá trị cố định duy nhất tương ứng với mỗi tài khoản khách hàng ở dịch vụ, thường giá trị này do server hệ thống được tích hợp cấp cho PayME SDK |
-| **\*phone\***  | Yes           | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null |
+| **\*phone\***  | Yes           | Số điện thoại của hệ thống tích hợp |
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 
@@ -176,14 +205,17 @@ Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn
 | <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản. App gọi lại hàm login() để tiếp tục thao tác |
 | <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
 | <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
-| <code>LIMIT</code>   | <code>-3</code>           | Lỗi số dư không đủ để thực hiện giao dịch |
+| <code>LIMIT</code>   | <code>-3</code>           | Số tiền thanh toán vượt quá hoặc nhỏ hơn hạn mức giao dịch |
 | <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
 | <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
 | <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
+| <code>PAYMENT_PENDING</code>   | <code>-11</code>          | Thanh toán đang chờ xử lý |
 | <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
 | <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
 | <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+| <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Tài khoản bị khoá hoặc không truyền số phone |
+
 
 ## Các c**hức năng của PayME SDK**
 
@@ -246,6 +278,24 @@ payme.openWallet(
 		 )
 }
 ```
+**openHistory() - Mở Danh sách lịch sử giao dịch của tài khoản **
+Yêu cầu tài khoản đã kích hoạt và định danh để sử 
+```kotlin
+public fun openKYC(
+fragmentManager: FragmentManager,
+        onSuccess: (JSONObject?) -> Unit,
+        onError: (JSONObject?, Int, String?) -> Unit
+```
+Ví dụ :
+
+```kotlin
+ payme?.openHistory(supportFragmentManager,onSuccess = {
+
+            },onError = {jsonObject, i, s ->
+                PayME.showError(s)
+            })
+```
+
 ### openKYC() -  Mở modal định danh tài khoản
 Hàm này được gọi khi từ app tích hợp khi muốn mở modal định danh tài khoản ( yêu cầu tài khoản phải chưa định danh )
 
