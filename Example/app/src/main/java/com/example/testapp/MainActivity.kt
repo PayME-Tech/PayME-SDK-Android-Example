@@ -211,14 +211,14 @@ class MainActivity : AppCompatActivity() {
 
         }
         buttonPayQR.setOnClickListener {
-            payme?.payQRCode(supportFragmentManager,inputQRString.text.toString(),spinnerPayQRPayCode.selectedItem.toString(),true,onSuccess = {
+            payme?.payQRCode(supportFragmentManager,inputQRString.text.toString(),spinnerPayQRPayCode.selectedItem.toString(),null,true,onSuccess = {
 
             },onError = {jsonObject, i, s ->
                 PayME.showError(s)
             })
         }
         buttonScanQr.setOnClickListener {
-            payme?.scanQR(this.supportFragmentManager,spinnerScanQRPayCode.selectedItem.toString(),onSuccess = {
+            payme?.scanQR(this.supportFragmentManager,spinnerScanQRPayCode.selectedItem.toString(),null,onSuccess = {
 
             },onError = {jsonObject, i, s ->  })
         }
@@ -463,7 +463,7 @@ class MainActivity : AppCompatActivity() {
                     "OpenEWallet",
                     ""
                 )
-            payme?.pay(this.supportFragmentManager, infoPayment, false,spinnerPayCode.selectedItem.toString(),
+            payme?.pay(this.supportFragmentManager, infoPayment, true,spinnerPayCode.selectedItem.toString(),"apptest://payment.vnpay.result",
                 onSuccess = { json: JSONObject? ->
                     println("jsononSuccess"+json)
                 },
@@ -490,6 +490,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
 
 
 }
