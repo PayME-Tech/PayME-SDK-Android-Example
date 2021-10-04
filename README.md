@@ -179,7 +179,7 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
 Tạo connectToken bao gồm thông tin KYC 
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877",   kycInfo: {
-        {
+        
             fullname :string
             gender: string ( MALE/FEMALE)
             birthday: Date(ISO)
@@ -194,7 +194,7 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
               front: string
               back: string
             }}
-        } }" , secretKey )
+         }" , secretKey )
 ```
 | **Tham số**   | **Bắt buộc** | **Giải thích**                                               |
 | :------------ | :----------- | :----------------------------------------------------------- |
