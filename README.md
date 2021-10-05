@@ -198,19 +198,6 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
 ```
 
 
-| **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
-| -------------- | ------------ | ------------------------------------------------------------ |
-| fullname | Yes          | Họ tên |
-| gender | Yes          |  Giới tính ( MALE/FEMALE) |
-| address | Yes          |  Địa chỉ |
-| identifyType | Yes          |   Loại giấy tờ (CMND/CCCD) |
-| identifyNumber | Yes          |   Số giấy tờ  |
-| issuedAt | Yes          |   Ngày đăng ký |
-| placeOfIssue | Yes          |  Nơi cấp |
-| video | No          |   đường dẫn tới video |
-| face | No          |   đường dẫn tới ảnh chụp khuôn mặt |
-| front | No          |   đường dẫn tới ảnh mặt trước giấy tờ |
-| back | No          |   đường dẫn tới ảnh mặt sau giấy tờ |
 
 
 
@@ -228,6 +215,23 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
 | **\*phone\***  | Yes           | Số điện thoại của hệ thống tích hợp |
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+
+Tham số KycInfo
+
+| **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| fullname | Yes          | Họ tên |
+| gender | Yes          |  Giới tính ( MALE/FEMALE) |
+| address | Yes          |  Địa chỉ |
+| identifyType | Yes          |   Loại giấy tờ (CMND/CCCD) |
+| identifyNumber | Yes          |   Số giấy tờ  |
+| issuedAt | Yes          |   Ngày đăng ký |
+| placeOfIssue | Yes          |  Nơi cấp |
+| video | No          |   đường dẫn tới video |
+| face | No          |   đường dẫn tới ảnh chụp khuôn mặt |
+| front | No          |   đường dẫn tới ảnh mặt trước giấy tờ |
+| back | No          |   đường dẫn tới ảnh mặt sau giấy tờ |
+
 
 ## Mã lỗi của PayME SDK
 
