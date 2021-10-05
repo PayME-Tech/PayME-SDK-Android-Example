@@ -176,7 +176,7 @@ connectToken cần để truyền gọi api từ tới PayME và sẽ được t
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" , secretKey )
 ```
-Tạo connectToken bao gồm thông tin KYC 
+Tạo connectToken bao gồm thông tin KYC ( Dành cho các đối tác có hệ thống KYC riêng )
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877",   kycInfo: {
         
