@@ -180,7 +180,7 @@ Tạo connectToken bao gồm thông tin KYC ( Dành cho các đối tác có h�
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877",   kycInfo: {
         
-            fullname :string
+            fullname :string 
             gender: string ( MALE/FEMALE)
             birthday: Date(ISO)
             address: string
@@ -196,9 +196,28 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
             }}
          }" , secretKey )
 ```
-| **Tham số**   | **Bắt buộc** | **Giải thích**                                               |
-| :------------ | :----------- | :----------------------------------------------------------- |
-| <code>face</code><code>video</code><code>front</code><code>back</code> | Yes | đường dẫn đến ảnh/video kyc |
+
+
+| **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| fullname | Yes          | Họ tên |
+| gender | Yes          |  Giới tính ( MALE/FEMALE) |
+| address | Yes          |  Địa chỉ |
+| identifyType | Yes          |   Loại giấy tờ (CMND/CCCD) |
+| identifyNumber | Yes          |   Số giấy tờ  |
+| issuedAt | Yes          |   Ngày đăng ký |
+| placeOfIssue | Yes          |  Nơi cấp |
+| video | No          |   đường dẫn tới video |
+| face | No          |   đường dẫn tới ảnh chụp khuôn mặt |
+| front | No          |   đường dẫn tới ảnh mặt trước giấy tờ |
+| back | No          |   đường dẫn tới ảnh mặt sau giấy tờ |
+
+
+
+
+
+
+
 
 
 
