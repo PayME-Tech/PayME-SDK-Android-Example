@@ -65,7 +65,7 @@ dependencies {
 ```
 
 - **Update file Android Manifest **
-Nếu App Tích hợp có sử dụng payCode = VNPAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán để khi thanh toán xong bên ví VNPAY có thể tự động quay lại app tích hợp 
+Nếu App Tích hợp có sử dụng payCode = VN_PAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán để khi thanh toán xong bên ví VNPAY có thể tự động quay lại app tích hợp 
 
 
 
