@@ -607,6 +607,8 @@ Danh sách PAY_CODE
 | ATM | Yes          | Thanh toán thẻ ATM nội đia|
 | CREDIT  | Yes           |  Thẻ tín dụng |
 | MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
+| MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
+| VN_PAY  | Yes           |  Thanh toán qua vnpay |
 
 ### scanQR() - Mở chức năng quét mã QR để thanh toán
 
