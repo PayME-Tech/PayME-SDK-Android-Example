@@ -59,15 +59,14 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.25'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.29'
 ...
 }
 ```
 
 - **Update file Android Manifest **
-Nếu App Tích hợp có sử dụng payCode = VNPAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán
-vs host là packageName của app tích hợp scheme ="paymesdk"
-Ví Dụ  : vn.payme.sdk.example
+Nếu App Tích hợp có sử dụng payCode = VN_PAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán để khi thanh toán xong bên ví VNPAY có thể tự động quay lại app tích hợp 
+
 
 
 ```xml
@@ -84,24 +83,12 @@ Ví Dụ  : vn.payme.sdk.example
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-		    android:scheme="paymesdk"
-                    android:host="vn.payme.sdk.example"
+               <data android:scheme="apptest"
+                    android:host="payment.vnpay.result"
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>
 ```
-Trong Activity nhận kết quả thanh toán : 
-```kotlin
-  override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        PayME.onNewIntent(intent)
-
-    }
-```
-
-
-
 
 # Cách sử dụng SDK:
 
@@ -187,8 +174,39 @@ Cách tạo **connectToken**:
 connectToken cần để truyền gọi api từ tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
 
 ```kotlin
-connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" + secretKey )
+connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" , secretKey )
 ```
+Tạo connectToken bao gồm thông tin KYC ( Dành cho các đối tác có hệ thống KYC riêng )
+```kotlin
+connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877",   kycInfo: {
+        
+            fullname :"Nguyễn Văn A" 
+            gender: "MALE"
+            birthday:"1995-01-20T06:53:07.621Z"
+            address: "15 Nguyễn cơ thạch",
+            identifyType:"CMND",
+            identifyNumber: "142744332",
+            issuedAt: "2013-01-20T06:53:07.621Z",
+            placeOfIssue: "Hồ Chí Minh",
+            video: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+            face: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+            image: {
+              front: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+              back: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
+            }}
+         }" , secretKey )
+```
+
+
+
+
+
+
+
+
+
+
+
 
 | **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
 | -------------- | ------------ | ------------------------------------------------------------ |
@@ -197,6 +215,23 @@ connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", 
 | **\*phone\***  | Yes           | Số điện thoại của hệ thống tích hợp |
 
 Trong đó **\*AES\*** là hàm mã hóa theo thuật toán AES. Tùy vào ngôn ngữ ở server mà bên hệ thống dùng thư viện tương ứng. Xem thêm tại đây https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+
+Tham số KycInfo
+
+| **Tham số**    | **Bắt buộc** | **Giải thích**                                               |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| fullname | Yes          | Họ tên |
+| gender | Yes          |  Giới tính ( MALE/FEMALE) |
+| address | Yes          |  Địa chỉ |
+| identifyType | Yes          |   Loại giấy tờ (CMND/CCCD) |
+| identifyNumber | Yes          |   Số giấy tờ  |
+| issuedAt | Yes          |   Ngày đăng ký |
+| placeOfIssue | Yes          |  Nơi cấp |
+| video | No          |   đường dẫn tới video |
+| face | No          |   đường dẫn tới ảnh chụp khuôn mặt |
+| front | No          |   đường dẫn tới ảnh mặt trước giấy tờ |
+| back | No          |   đường dẫn tới ảnh mặt sau giấy tờ |
+
 
 ## Mã lỗi của PayME SDK
 
@@ -494,9 +529,13 @@ public fun pay(
             infoPayment: InfoPayment,
   	    isShowResultUI: Boolean,
   	    payCode: String,
+	    redirectUrl: String?,
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int, String?) -> Unit)?,
         )
+	
+-redirectUrl : trong trường hợp payCode là VN_PAY cần truyền url scheme đã khai báo ở trong file android mainfests 
+
 class InfoPayment {
     var action : String? = null
     var amount : Int? = null
@@ -521,6 +560,7 @@ thông tin tài khoản lấy qua hàm getAccountInfo()
 thông tin số dư lấy qua hàm getWalletInfo()
 
 
+
 ```
 
 Ví dụ:
@@ -541,6 +581,7 @@ payme?.pay( this.supportFragmentManager,
 	    infoPayment,
 	    true,
 	    PAY_CODE.PAYME,
+	    null,
             onSuccess = { json: JSONObject? -> },
             onError = { jsonObject, code, message ->
                         if (message != null && message.length > 0) {
@@ -566,6 +607,8 @@ Danh sách PAY_CODE
 | ATM | Yes          | Thanh toán thẻ ATM nội đia|
 | CREDIT  | Yes           |  Thẻ tín dụng |
 | MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
+| MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
+| VN_PAY  | Yes           |  Thanh toán qua vnpay |
 
 ### scanQR() - Mở chức năng quét mã QR để thanh toán
 
@@ -573,6 +616,7 @@ Danh sách PAY_CODE
 fun scanQR(
 	fragmentManager: FragmentManager,
 	payCode: String,
+	redirectUrl: String?,
 	onSuccess: (JSONObject?) -> Unit,
 	onError: (JSONObject?, Int, String?) -> Unit
 ) : Unit 
@@ -601,6 +645,7 @@ val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
     fragmentManager: FragmentManager, 
     qr: String,
     payCode: String,
+    redirectUrl: String?,
     isShowResultUI:Boolean,
     onSuccess: (JSONObject?) -> Unit,
     onError:(JSONObject?, Int, String?) -> Unit)
