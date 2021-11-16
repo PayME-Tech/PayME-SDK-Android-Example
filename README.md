@@ -59,7 +59,7 @@ android {
 }
 dependencies {
 ...
-  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.29'
+  implementation 'com.github.PayME-Tech:PayME-SDK-Android:0.9.30'
 ...
 }
 ```
@@ -88,6 +88,12 @@ Nếu App Tích hợp có sử dụng payCode = VN_PAY thì cấu hình thêm ur
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>
+```
+Cấp quyền truy cập danh bạ khi dùng chức năng nạp và chuyển tiền 
+```xml
+    ...
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    ...
 ```
 
 # Cách sử dụng SDK:
