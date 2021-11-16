@@ -89,7 +89,7 @@ Nếu App Tích hợp có sử dụng payCode = VN_PAY thì cấu hình thêm ur
             </intent-filter>
         </activity>
 ```
-Cấp quyền truy cập danh bạ khi dùng chức năng nạp và chuyển tiền 
+Cấp quyền truy cập danh bạ khi dùng chức năng nạp điện thoại và chuyển tiền 
 ```xml
     ...
     <uses-permission android:name="android.permission.READ_CONTACTS" />
