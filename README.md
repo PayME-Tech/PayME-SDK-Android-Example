@@ -614,7 +614,6 @@ Danh sách PAY_CODE
 | CREDIT  | Yes           |  Thẻ tín dụng |
 | MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
 | MANUAL_BANK  | Yes           |  Thanh toán chuyển khoản ngân hàng |
-| VN_PAY  | Yes           |  Thanh toán qua vnpay |
 
 ### scanQR() - Mở chức năng quét mã QR để thanh toán
 
