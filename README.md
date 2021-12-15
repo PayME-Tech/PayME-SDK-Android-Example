@@ -11,7 +11,7 @@ PayME Android SDK là bộ thư viện để tích hợp Ví điện tử PayME 
 | 1    | MC app  | Là appp của merchant sẽ tích hợp SDK vào để thực hiện chức năng thanh toán ví PayME. |
 | 2    | SDK     | Là bộ công cụ hỗ trợ tích hợp ví PayME vào hệ thống app.     |
 | 3    | backend | Là hệ thống tích hợp hỗ trợ cho app, server hoặc api hỗ trợ  |
-| 4    | AES     | Hàm mã hóa dữ liệu AES256 PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
+| 4    | AES     | Hàm mã hóa dữ liệu AES256 CBC PKCS5. [Tham khảo](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
 | 5    | RSA     | Thuật toán mã hóa dữ liệu RSA.                               |
 | 6    | IPN     | Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME |
 
@@ -178,7 +178,7 @@ configColor : là tham số màu để có thể thay đổi màu sắc giao d�
 Cách tạo **connectToken**:
 
 connectToken cần để truyền gọi api từ tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
-
+Thuật toán AES,ode CBC,key size=256 bit, PKCS5Padding 
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" , secretKey )
 ```
