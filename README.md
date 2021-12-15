@@ -65,30 +65,7 @@ dependencies {
 ```
 
 - **Update file Android Manifest **
-Nếu App Tích hợp có sử dụng payCode = VN_PAY thì cấu hình thêm urlscheme vào Activity nhận kết quả thanh toán để khi thanh toán xong bên ví VNPAY có thể tự động quay lại app tích hợp 
-
-
-
-```xml
- <activity
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true"  >
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-               <data android:scheme="apptest"
-                    android:host="payment.vnpay.result"
-                    tools:ignore="AppLinkUrlError" />
-            </intent-filter>
-        </activity>
-```
+- 
 Cấp quyền truy cập danh bạ khi dùng chức năng nạp điện thoại và chuyển tiền 
 ```xml
     ...
@@ -535,12 +512,10 @@ public fun pay(
             infoPayment: InfoPayment,
   	    isShowResultUI: Boolean,
   	    payCode: String,
-	    redirectUrl: String?,
             onSuccess: ((JSONObject?) -> Unit)?,
             onError: ((JSONObject?, Int, String?) -> Unit)?,
         )
 	
--redirectUrl : trong trường hợp payCode là VN_PAY cần truyền url scheme đã khai báo ở trong file android mainfests 
 
 class InfoPayment {
     var action : String? = null
