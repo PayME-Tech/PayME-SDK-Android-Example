@@ -596,7 +596,6 @@ Danh sách PAY_CODE
 fun scanQR(
 	fragmentManager: FragmentManager,
 	payCode: String,
-	redirectUrl: String?,
 	onSuccess: (JSONObject?) -> Unit,
 	onError: (JSONObject?, Int, String?) -> Unit
 ) : Unit 
@@ -625,7 +624,6 @@ val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
     fragmentManager: FragmentManager, 
     qr: String,
     payCode: String,
-    redirectUrl: String?,
     isShowResultUI:Boolean,
     onSuccess: (JSONObject?) -> Unit,
     onError:(JSONObject?, Int, String?) -> Unit)
