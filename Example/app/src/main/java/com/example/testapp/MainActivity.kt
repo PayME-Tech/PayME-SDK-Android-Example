@@ -463,7 +463,7 @@ class MainActivity : AppCompatActivity() {
                     "OpenEWallet",
                     ""
                 )
-            payme?.pay(this.supportFragmentManager, infoPayment, true,spinnerPayCode.selectedItem.toString(),"apptest://payment.vnpay.result",
+            payme?.pay(this.supportFragmentManager, infoPayment, true,spinnerPayCode.selectedItem.toString(),
                 onSuccess = { json: JSONObject? ->
                     println("jsononSuccess"+json)
                 },
