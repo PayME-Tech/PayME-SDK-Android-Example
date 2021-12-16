@@ -522,9 +522,11 @@ class InfoPayment {
     var amount : Int? = null
     var note : String? = null
     var orderId : String? = null
-    var storeId : Long 
+    var storeId : Long ?= null
     var type : String? = null
     var referExtraData : String? = null
+    var userName : String ?= null
+
 }
 
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
@@ -535,6 +537,7 @@ class InfoPayment {
 - type: OpenEWallet
 - referExtraData: Thông tin bổ sung (extraData) là một nội dung được định nghĩa theo dạng chuỗi, chứa thông tin bổ sung của một giao dịch mà đối tác muốn nhận về khi hoàn tất một giao dịch với PAYME.
 nếu Merchant ko cần IPN thêm data custom của mình có thể bỏ qua
+- userName: tên tài khoản 
 
 -Khi thanh toán bằng ví PayME thì yêu cầu tài khoản đã kích hoạt,định danh và số dư trong ví phải lớn hơn số tiền thanh toán
 thông tin tài khoản lấy qua hàm getAccountInfo()
@@ -556,7 +559,8 @@ val infoPayment = InfoPayment(
                     nextValues.toString(),
                     storeId,
                     "OpenEWallet",
-                    ""
+                    "",
+		    null
                 )
 payme?.pay( this.supportFragmentManager,
 	    infoPayment,
@@ -602,12 +606,12 @@ fun scanQR(
 ```
 Định dạng qr : 
 ```kotlin
- val qrString =  "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}"
+ val qrString =  "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}|${userName}"
 ```
 
 Ví dụ  : 
 ```kotlin
-val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+val qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323|taikhoan"
 ```
 
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
