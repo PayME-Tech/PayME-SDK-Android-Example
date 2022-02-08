@@ -7,7 +7,7 @@ PayME Android SDK is a set of libraries to easily integrate PayME E-Wallet into 
 **Some terms**
 
 | | Name | Explanation |
-| ---- | ------- | --------------------------------------------------- ---------- |
+| ---- | ------- | ------------------------------------------------------------- |
 | 1 | MC app | As the merchant's app, it will integrate the SDK to perform the PayME wallet payment function. |
 | 2 | SDK | Is a toolkit to support the integration of PayME wallet into the app system. |
 | 3 | backend | An integrated system that supports an app, server or api that supports |
@@ -117,6 +117,188 @@ onError: (JSONObject?, Int ) , String?) -> Unit
 
 Example:
 
+```kotlin
+public fun loginExample(){
+  payme.login(		onSuccess = { accountStatus ->
+                    if(accountStatus == AccountStatus.NOT_ACTIVATED){
+                        //Account not activated
+			// call fun openWallet() to activate account
+                    }
+                    if(accountStatus == AccountStatus.NOT_KYC){
+                        //Account not identified
+			// call fun openKYC() to identifier account
+
+                    }
+		      if (accountStatus == AccountStatus.KYC_REVIEW) {
+                        //Account has sent identification information, pending approval
+                    }
+                    if (accountStatus == AccountStatus.KYC_REJECTED) {
+                        //Identity request is denied
+			// call fun openKYC() to identifier account
+
+                    }
+                    if(accountStatus == AccountStatus.KYC_APPROVED){
+                        //Identified account
+                      walletView.setVisibility(View.VISIBLE)
+		    
+               	    },
+                    onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                    })
+}
+```
+
+configColor : is the color parameter to change the color of PayME wallet transactions, data type format is #rrggbb. If 2 colors are transmitted, the color will be color gradient according to the 2 input colors.
+
+[![img](https://github.com/PayME-Tech/PayME-SDK-Android-Example/raw/main/fe478f50-e3de-4c58-bd6d-9f77d46ce230.png?raw=true)](https://github.com/PayME-Tech/PayME-SDK-Android-Example/blob/main/fe478f50-e3de-4c58-bd6d-9f77d46ce230.png?raw=true)
+
+How to create **connectToken**:
+
+connectToken is needed to pass to call api to PayME and will be generated from the integrated app's backend. The structure is as follows:
+AES algorithm, mode CBC,key size=256 bit, PKCS5Padding
+```kotlin
+connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" , secretKey )
+```
+Create connectToken including KYC information (For partners with their own KYC system)
+```kotlin
+connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877",   kycInfo: {
+        
+            fullname :"Nguyễn Văn A" 
+            gender: "MALE"
+            birthday:"1995-01-20T06:53:07.621Z"
+            address: "15 Nguyễn cơ thạch",
+            identifyType:"CMND",
+            identifyNumber: "142744332",
+            issuedAt: "2013-01-20T06:53:07.621Z",
+            placeOfIssue: "Hồ Chí Minh",
+            video: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+            face: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+            image: {
+              front: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+              back: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
+            }}
+         }" , secretKey )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+| **Parameters** | **Required** | **Explanation** |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| **timestamp**  | Yes          | ConnectToken's creation time in the format iSO 8601 , used to determine the timeout time of connectToken. Example: 2021-01-20T06:53:07.621Z |
+| **\*userId\*** | Yes          | is a unique fixed value corresponding to each customer account in the service, usually this value is provided by the integrated system server for the PayME SDK |
+| **\*phone\***  | Yes           | Phone number of the system integrator |
+
+**\*AES\*** is the encryption function according to the AES algorithm. Depending on the language on the server, the system side uses the corresponding library. See more here https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+
+Parameter KycInfo
+
+| **Parameters** | **Required** | **Explanation**                                              |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| fullname | Yes          | Fullname |
+| gender | Yes          |  Gender ( MALE/FEMALE) |
+| address | Yes          |  Address |
+| identifyType | Yes          |   Type of identify document (ID card/CCCD) |
+| identifyNumber | Yes          |   Number of identify documents  |
+| issuedAt | Yes          |   Registration Date|
+| placeOfIssue | Yes          |  Place of issue |
+| video | No          |   url to video |
+| face | No          |   url to face photo |
+| front | No          |   url to the photo of the front of the identify document |
+| back | No          |   url to the photo of the back of the identify document |
+
+
+## Mã lỗi của PayME SDK
+
+| **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
+| :------------ | :----------- | :----------------------------------------------------------- |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản. App gọi lại hàm login() để tiếp tục thao tác |
+| <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
+| <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
+| <code>LIMIT</code>   | <code>-3</code>           | Số tiền thanh toán vượt quá hoặc nhỏ hơn hạn mức giao dịch |
+| <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
+| <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
+| <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
+| <code>PAYMENT_PENDING</code>   | <code>-11</code>          | Thanh toán đang chờ xử lý |
+| <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
+| <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
+| <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
+| <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
+| <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Tài khoản bị khoá hoặc không truyền số phone |
+
+
+## Các c**hức năng của PayME SDK**
+
+### getAccountInfo()
+
+App có thể dùng hàm này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
+
+```kotlin
+public fun getAccountInfo(
+        onSuccess: (JSONObject?) -> Unit,
+        onError: (JSONObject?, Int, String?) -> Unit
+        )
+```
+
+Ví dụ:
+
+```kotlin
+      payme?.getAccountInfo(
+        onSuccess = { json: JSONObject? ->
+        },
+        onError = { jsonObject, code, message ->
+                        PayME.showError(message)
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme?.logout()
+                        }
+                    })
+```
+
+**openWallet() - Mở UI chức năng PayME tổng hợp**
+
+```kotlin
+public fun openWallet(onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
+
+```
+
+Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
+
+| **Tham số** | **Bắt buộc** | **Giải thích**                                               |
+| :---------- | ------------ | ------------------------------------------------------------ |
+| onSuccess   | Yes          | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
+| onError     | Yes          | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+
+**Ví dụ :**
+
+```kotlin
+payme.openWallet(
+	onSuccess = { json: JSONObject ->
+              },
+	onError = { jsonObject, code, message ->
+			PayME.showError(message)
+                        //Lỗi khi hết hạn đăng nhập
+                        if (code == ERROR_CODE.EXPIRED) {
+                            walletView.setVisibility(View.GONE)
+                            payme.logout()
+			    // hoặc có thể gọi payme.login() để tự động đăng nhập lại vì khi gọi login là đã có gọi payme.logout() trước.
+			    // Sau đó có thể gọi lại openWallet() để mở lại UI ví PayME.
+			}
+		   }
+		 )
+}
+```
+
+**openHistory() - Mở Danh sách lịch sử giao dịch của tài khoản **
+Yêu cầu tài khoản đã kích hoạt và định danh để sử
 ```kotlin
 public fun openKYC(
 fragmentManager: FragmentManager,
@@ -406,7 +588,7 @@ payme?.pay( this.supportFragmentManager,
 List of PAY_CODE
 
 | **Parameters** | **Required** | **Explanation** |
-| -------------- | ------------ | --------------------------------------------------- ---------- |
+| -------------- | ------------ | ------------------------------------------------------------- |
 | PAYME| Yes | PayME wallet payment |
 | ATM | Yes | Domestic ATM card payment|
 | CREDIT | Yes | Credit Card |

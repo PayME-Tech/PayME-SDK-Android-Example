@@ -90,7 +90,7 @@ Chuẩn mã hóa: RSA-512bit.
 
 ### Khởi tạo PayME SDK:
 
-Trước khi sử dụng PayME SDK cần gọi phương thức khởi tạo một lần duy nhất để khởi tạo SDK.
+Trước khi sử dụng PayME SDK, cần gọi phương thức khởi tạo một lần duy nhất để khởi tạo SDK.
 
 ```kotlin
 import vn.payme.sdk.model.Env
@@ -154,7 +154,7 @@ configColor : là tham số màu để có thể thay đổi màu sắc giao d�
 
 Cách tạo **connectToken**:
 
-connectToken cần để truyền gọi api từ tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
+connectToken cần để truyền gọi api tới PayME và sẽ được tạo từ hệ thống backend của app tích hợp. Cấu trúc như sau:
 Thuật toán AES,mode CBC,key size=256 bit, PKCS5Padding 
 ```kotlin
 connectToken = AES256("{ timestamp: "2021-01-20T06:53:07.621Z", userId : "ABC", phone : "0909998877" }" , secretKey )
