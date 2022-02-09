@@ -78,7 +78,7 @@ Grant access to contacts when using phone top-up and money transfer
 The PayME system will provide the integrated app with the following information:
 
 - **PublicKey** : Used to encrypt data, the built-in app needs to pass it to the SDK for encryption.
-- **AppToken** : AppToken provides a unique identifier for each app MC, which needs to be passed to the SDK for encryption
+- **AppToken** : AppToken is uniquely provided for each app MC to identifier, which needs to be passed to the SDK for encryption
 - **SecretKey** : Used to encrypt and authenticate data in the backend system for the integrated app.
 
 The App side will provide the PayME system with the following information:
@@ -206,7 +206,7 @@ Parameter KycInfo
 | fullname | Yes          | Fullname |
 | gender | Yes          |  Gender ( MALE/FEMALE) |
 | address | Yes          |  Address |
-| identifyType | Yes          |   Type of identify document (ID card/CCCD) |
+| identifyType | Yes          |   Type of the identify document (ID card/CCCD) |
 | identifyNumber | Yes          |   Number of identify documents  |
 | issuedAt | Yes          |   Registration Date|
 | placeOfIssue | Yes          |  Place of issue |
@@ -216,30 +216,30 @@ Parameter KycInfo
 | back | No          |   url to the photo of the back of the identify document |
 
 
-## Mã lỗi của PayME SDK
+## Error codes of PayME SDK
 
-| **Hằng số**   | **Mã lỗi** | **Giải thích**                                               |
+| **Constant**   | **Error code** | **Explanation**                                               |
 | :------------ | :----------- | :----------------------------------------------------------- |
-| <code>EXPIRED</code> | <code>401</code>          | ***token*** hết hạn sử dụng hoặc có device khác đăng nhập vào tài khoản. App gọi lại hàm login() để tiếp tục thao tác |
-| <code>NETWORK</code>  | <code>-1</code>          | Kết nối mạng bị sự cố |
-| <code>SYSTEM</code>   | <code>-2</code>           | Lỗi hệ thống |
-| <code>LIMIT</code>   | <code>-3</code>           | Số tiền thanh toán vượt quá hoặc nhỏ hơn hạn mức giao dịch |
-| <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Lỗi tài khoản chưa kích hoạt |
-| <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Lỗi tài khoản chưa định danh |
-| <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Thanh toán thất bại |
-| <code>PAYMENT_PENDING</code>   | <code>-11</code>          | Thanh toán đang chờ xử lý |
-| <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Lỗi mã hóa/giải mã dữ liệu |
-| <code>USER_CANCELLED</code>   | <code>-8</code>          | Người dùng thao tác hủy |
-| <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
-| <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
-| <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Tài khoản bị khoá hoặc không truyền số phone |
+| <code>EXPIRED</code> | <code>401</code>          | ***token*** is expired or another device is logged into the account. Recall function login () to continue the operation |
+| <code>NETWORK</code>  | <code>-1</code>          | Connection error |
+| <code>SYSTEM</code>   | <code>-2</code>           | System error |
+| <code>LIMIT</code>   | <code>-3</code>           | Payment amount is over or less than transaction limit |
+| <code>ACCOUNT_NOT_ACTIVATED</code>   | <code>-4</code>           | Account is not activated |
+| <code>ACCOUNT_NOT_KYC</code>   | <code>-5</code>           | Account is not identified |
+| <code>PAYMENT_ERROR</code>   | <code>-6</code>          | Payment failed |
+| <code>PAYMENT_PENDING</code>   | <code>-11</code>          | Payment pending |
+| <code>ERROR_KEY_ENCODE</code>   | <code>-7</code>           | Encryption/decryption error |
+| <code>USER_CANCELLED</code>   | <code>-8</code>          | User canceled payment |
+| <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Account is not logged in |
+| <code>BALANCE_ERROR</code>   | <code>-10</code>           | Error when paying with PayME wallet but the balance in the wallet is not enough |
+| <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Account is locked or phone number is not transmitted |
 
 
-## Các c**hức năng của PayME SDK**
+## Functions of PayME SDK
 
 ### getAccountInfo()
 
-App có thể dùng hàm này sau khi khởi tạo SDK để biết được trạng thái liên kết tới ví PayME.
+App can use this function after initializing SDK to know the link status to PayME wallet.
 
 ```kotlin
 public fun getAccountInfo(
@@ -248,7 +248,7 @@ public fun getAccountInfo(
         )
 ```
 
-Ví dụ:
+Example:
 
 ```kotlin
       payme?.getAccountInfo(
@@ -263,21 +263,21 @@ Ví dụ:
                     })
 ```
 
-**openWallet() - Mở UI chức năng PayME tổng hợp**
+**openWallet() - Open the PayME wallet's functions UI**
 
 ```kotlin
 public fun openWallet(onSuccess: (JSONObject)->Unit, onError:(JSONObject?, Int?, String) -> Unit )
 
 ```
 
-Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 chức năng PayME bằng cách truyền vào tham số Action như trên.
+This function is called when the intergrated app want to call a PayME function by passing the Action parameter as above.
 
-| **Tham số** | **Bắt buộc** | **Giải thích**                                               |
+| **Parameters** | **Required** | **Explanation**                                               |
 | :---------- | ------------ | ------------------------------------------------------------ |
-| onSuccess   | Yes          | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
-| onError     | Yes          | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+| onSuccess   | Yes          | Callback when transaction is succeeded from PayME SDK |
+| onError     | Yes          | Callback when an error occurs while calling PayME SDK |
 
-**Ví dụ :**
+**Example :**
 
 ```kotlin
 payme.openWallet(
@@ -285,27 +285,27 @@ payme.openWallet(
               },
 	onError = { jsonObject, code, message ->
 			PayME.showError(message)
-                        //Lỗi khi hết hạn đăng nhập
+                        //Error when the access token is expired
                         if (code == ERROR_CODE.EXPIRED) {
                             walletView.setVisibility(View.GONE)
                             payme.logout()
-			    // hoặc có thể gọi payme.login() để tự động đăng nhập lại vì khi gọi login là đã có gọi payme.logout() trước.
-			    // Sau đó có thể gọi lại openWallet() để mở lại UI ví PayME.
+			    // or can call payme.login() to automatically re-login because when calling login, payme.logout() has been called before.
+			    // openWallet() can then be called again to reopen the PayME wallet UI.
 			}
 		   }
 		 )
 }
 ```
 
-**openHistory() - Mở Danh sách lịch sử giao dịch của tài khoản **
-Yêu cầu tài khoản đã kích hoạt và định danh để sử
+**openHistory() - Open the Account's Transaction History  **
+Requires an activated and identified account to use this function
 ```kotlin
 public fun openKYC(
 fragmentManager: FragmentManager,
         onSuccess: (JSONObject?) -> Unit,
         onError: (JSONObject?, Int, String?) -> Unit
 ```
-Ví dụ :
+Example :
 
 ```kotlin
  payme?.openHistory(supportFragmentManager,onSuccess = {
@@ -510,7 +510,7 @@ infoPayment: InfoPayment,
 isShowResultUI: Boolean,
 payCode: String,
 onSuccess: ((JSONObject?) -> Unit)?,
-onError: ((JSONObject?, Int, String?) - > Unit)?,
+onError: ((JSONObject?, Int, String?) -> Unit)?,
 )
 
 
@@ -539,7 +539,7 @@ If Merchant does not need IPN to add his custom data, he can skip
 Note: Only userName or storeId, if using userName, let storeId = null and vice versa
 
 
--When paying with PayME wallet, it requires an activated account, identifier and balance in the wallet must be greater than the payment amount
+-When paying with PayME wallet, it requires an activated identified account, and balance in the wallet must be greater than the payment amount
 account information obtained through the getAccountInfo() function
 balance information obtained through the getWalletInfo() function
 

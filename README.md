@@ -297,7 +297,7 @@ payme.openWallet(
 }
 ```
 **openHistory() - Mở Danh sách lịch sử giao dịch của tài khoản **
-Yêu cầu tài khoản đã kích hoạt và định danh để sử 
+Yêu cầu tài khoản đã kích hoạt và định danh để sử dụng
 ```kotlin
 public fun openKYC(
 fragmentManager: FragmentManager,
