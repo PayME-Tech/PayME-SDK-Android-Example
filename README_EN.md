@@ -233,6 +233,7 @@ Parameter KycInfo
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Account is not logged in |
 | <code>BALANCE_ERROR</code>   | <code>-10</code>           | Error when paying with PayME wallet but the balance in the wallet is not enough |
 | <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Account is locked or phone number is not transmitted |
+| <code>DEACTIVATED_ACCOUNT</code>   | <code>-405</code>           | Account is deactivated |
 
 
 ## Functions of PayME SDK

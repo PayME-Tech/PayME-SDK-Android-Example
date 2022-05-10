@@ -233,6 +233,7 @@ Tham số KycInfo
 | <code>ACCOUNT_NOT_LOGIN</code>   | <code>-9</code>           | Lỗi chưa đăng nhập tài khoản |
 | <code>BALANCE_ERROR</code>   | <code>-10</code>           | Lỗi khi thanh toán bằng ví PayME mà số dư trong ví không đủ |
 | <code>ACCOUNT_ERROR</code>   | <code>-12</code>           | Tài khoản bị khoá hoặc không truyền số phone |
+| <code>DEACTIVATED_ACCOUNT</code>   | <code>-405</code>           | Tài khoản đã bị vô hiệu hóa |
 
 
 ## Các c**hức năng của PayME SDK**
