@@ -594,7 +594,7 @@ List of PAY_CODE
 | ATM | Yes | Domestic ATM card payment|
 | CREDIT | Yes | Credit Card |
 | MANUAL_BANK | Yes | Bank transfer payment |
-| MANUAL_BANK | Yes | Bank transfer payment |
+| VIET_QR | Yes | Scan VietQR payment |
 
 ### scanQR() - Open QR code scanning for payment
 
