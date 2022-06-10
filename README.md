@@ -678,3 +678,14 @@ Hàm này được dùng để app tích hợp đóng lại UI của SDK khi đa
 **\*detail.cash :\*** Tiền có thể dùng
 
 **\*detail.lockCash:\*** tiền bị lock
+
+## Proguard
+
+Nếu app tích hợp có sử dụng proguard, cần thêm dòng dưới đây vào file proguard-rules.pro:
+```properties
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+```

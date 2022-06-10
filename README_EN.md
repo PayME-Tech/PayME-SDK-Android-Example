@@ -674,3 +674,15 @@ This function is used for the integrated app to close the SDK's UI during paymen
 **\*detail.cash :\*** Money can be used
 
 **\*detail.lockCash:\*** money is locked
+
+
+## Proguard
+
+If integrated app is using proguard, update file proguard-rules.pro:
+```properties
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+```
